@@ -4,8 +4,16 @@ class PMF(dict):
   def __init__(self, *al, **kw):
     super(PMF, self).__init__(*al, **kw)
 
+  def get_total(self):
+    return sum(self.itervalues())
+
+  def get_normalizer(self):
+    total = self.get_total()
+    return 1./total if total else float('inf')
+
+  def scale(self, factor):
+    for key in self: self[key] *= factor
+
   def normalize(self):
     '''Normalize all probabilities (so they sum to one).'''
-    total = sum(self.itervalues())
-    factor = 1./total if total else float('inf')
-    for key in self: self[key] *= factor
+    self.scale(self.get_normalizer())
