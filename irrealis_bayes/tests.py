@@ -83,5 +83,23 @@ class FunctionalTestPMF(unittest.TestCase):
     pmf.normalize()
     self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
 
+  def test_cookie_problem_with_arbitrary_factors(self):
+    '''
+    test_cookie_problem_with_arbitrary_factors
+
+    Can multiply dictionary by any convenient factor, as long as the whole
+    dictionary is multiplied by that factor. We later normalize to get a
+    probability distribution.
+    '''
+    # One "bowl_1" and one "bowl_2".
+    pmf = PMF(bowl_1 = 1, bowl_2 = 1)
+    # Thirty vanilla cookies (out of forty) in bowl_1.
+    pmf['bowl_1'] *= 30
+    # Twenty vanilla cookies (out of forty) in bowl_2.
+    pmf['bowl_2'] *= 20
+    # This normalizes dictionary into a probability distribution.
+    pmf.normalize()
+    self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
+
 
 if __name__ == "__main__": unittest.main()
