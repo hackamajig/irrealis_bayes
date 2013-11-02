@@ -3,7 +3,7 @@ from irrealis_bayes import PMF
 import unittest
 
 
-class TestORM(unittest.TestCase):
+class TestPMF(unittest.TestCase):
   def setUp(self):
     self.pmf = PMF(dict.fromkeys('abcde', 1))
 
