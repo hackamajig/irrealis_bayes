@@ -3,7 +3,7 @@ from irrealis_bayes import PMF
 import unittest
 
 
-class TestPMF(unittest.TestCase):
+class UnitTestPMF(unittest.TestCase):
   def setUp(self):
     self.pmf = PMF(dict.fromkeys('abcde', 1))
 
@@ -33,6 +33,43 @@ class TestPMF(unittest.TestCase):
     total = sum(self.pmf.itervalues())
     # This is how we verify total is 'nan': only 'nan' is not equal to itself.
     self.assertNotEqual(total, total)
+
+
+class FunctionalTestPMF(unittest.TestCase):
+  def test_cookie_problem(self):
+    '''
+    test_cookie_problem
+
+    Suppose there are two bowls of cookies. The first bowl contains 30 vanilla
+    cookies and ten chocolate cookies. The second bowl contains twenty of each.
+    Now suppose you choose one of the bowls at random and, without looking,
+    select a cookie from bowl at random. The cookie is vanilla. What is the
+    probability that it came from the first bowl?
+
+    Prior to choosing the cookie, the probability P(bowl_1) of choosing the
+    first bowl was 0.5 (since we were equally likely to choose either bowl).
+
+    Assuming we had chosen the first bowl, the likelihood P(vanilla | bowl_1)
+    of choosing a vanilla cookie was 0.75 (30 vanilla cookies out a total of
+    forty cookies in the first bowl). On the other hand, assuming we had chosen
+    the second bowl, the likelihood P(vanilla | bowl_2) of choosing a vanilla
+    cookie was 0.5 (twenty vanilla cookies out of 40 cookies in the second
+    bowl).
+
+    Since our hypotheses (bowl one or bowl two) are exclusive and exhaustive,
+    the law of total probability gives:
+    
+      P(bowl_1 | vanilla)
+      = (P(bowl_1)*P(vanilla | bowl_1)) / (P(bowl_1)*P(vanilla | bowl_1) + P(bowl_2)*P(vanilla | bowl_2))
+      = (0.5*0.75)/(0.5*0.75 + 0.5*0.5)
+      = (0.75)/(0.75 + 0.5)
+      = 0.6
+    '''
+    pmf = PMF(bowl_1 = 0.5, bowl_2 = 0.5)
+    pmf['bowl_1'] *= 0.5*0.75
+    pmf['bowl_2'] *= 0.5*0.5
+    pmf.normalize()
+    self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
 
 
 if __name__ == "__main__": unittest.main()
