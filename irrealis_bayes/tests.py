@@ -34,6 +34,18 @@ class UnitTestPMF(unittest.TestCase):
     # This is how we verify total is 'nan': only 'nan' is not equal to itself.
     self.assertNotEqual(total, total)
 
+  def test_copy(self):
+    '''
+    test_copy
+
+    Verify that pmf.copy() copies data into a new, independent PMF instance.
+    '''
+    pmf2 = self.pmf.copy()
+    pmf2.normalize()
+    for key in self.pmf:
+      self.assertEqual(1, self.pmf[key])
+      self.assertTrue(0.199 < pmf2[key] < 0.201)
+
 
 class FunctionalTestPMF(unittest.TestCase):
   def test_cookie_problem(self):

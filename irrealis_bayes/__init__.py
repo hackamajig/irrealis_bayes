@@ -2,7 +2,10 @@
 class PMF(dict):
   '''Dictionary as probability mass function.'''
   def __init__(self, *al, **kw):
-    super(PMF, self).__init__(*al, **kw)
+    super(self.__class__, self).__init__(*al, **kw)
+
+  def copy(self):
+    return self.__class__(self)
 
   def get_total(self):
     return sum(self.itervalues())
