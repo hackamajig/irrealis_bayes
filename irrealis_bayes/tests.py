@@ -78,8 +78,8 @@ class FunctionalTestPMF(unittest.TestCase):
       = 0.6
     '''
     pmf = PMF(bowl_1 = 0.5, bowl_2 = 0.5)
-    pmf['bowl_1'] *= 0.5*0.75
-    pmf['bowl_2'] *= 0.5*0.5
+    pmf['bowl_1'] *= 0.75
+    pmf['bowl_2'] *= 0.5
     pmf.normalize()
     self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
 
