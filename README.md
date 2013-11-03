@@ -8,7 +8,7 @@ study.
 Demo usage
 ==========
 
-I've placed a commented demos in the test cases defined in "irrealis_bayes/tests.py".
+I've placed commented demos in the test cases defined in "irrealis_bayes/tests.py".
 
 How to run tests
 ================
