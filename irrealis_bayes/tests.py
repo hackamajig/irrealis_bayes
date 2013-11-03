@@ -366,5 +366,47 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     self.assertTrue(0.055 < pmf[12] < 0.056)
     self.assertTrue(0.001 < pmf[20] < 0.002)
 
+  def test_locomotive_problem(self):
+    '''
+    test_locomotive_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
+
+    From Think Bayes:
+    
+      "A railroad numbers its locomotives in order 1..N. One day you see a
+      locomotive with the number 60. Estimate how many locomotives the railroad
+      has."
+
+      Based on this observation, we know the railroad has 60 or more
+      locomotives. But how many more? To apply Bayesian reasoning, we can break
+      this problem into two steps:
+      - What did we know about N before we saw the data?
+      - For any given value of N, what is the likelihood of seeing the data (a
+        locomotive with the number 60)?
+
+      The answer to the first question is the prior. The answer to the second
+      is the likelihood.
+    '''
+    # The likelihood function is identical to that of the dice problem.
+    class LocomotiveProblem(BayesPMF):
+      def likelihood(self, data, given_hypothesis):
+        return 0 if given_hypothesis < data else 1./given_hypothesis
+
+    # We don't have much basis to choose a prior, but we can start with
+    # something simple and then consider alternatives. Let's assume that N is
+    # equally likely to be any value from 1 to 1000.
+    pmf = LocomotiveProblem()
+    pmf.uniform_priors(xrange(1, 1001))
+    pmf.update(60)
+    most_likely_hypothesis, max_likelihood = max(pmf.iteritems(), key = lambda x: x[1])
+    # The most likely hypothesis is 60 locomotives. That might not seem like a
+    # very good guess; after all, what are the chances that you just happened
+    # to see the train with the highest number? Nevertheless, if you want to
+    # maximize the chance of getting the number exactly right, you should guess
+    # 60.
+    self.assertEqual(60, most_likely_hypothesis)
+    self.assertTrue(0.005 < max_likelihood < 0.006)
+    # An alternative is to compute the mean of the posterior distribution:
+    self.assertTrue(333 < pmf.mean() < 334)
+
 
 if __name__ == "__main__": unittest.main()
