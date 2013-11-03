@@ -112,7 +112,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_monty_hall_problem(self):
     '''
-    test_monty_hall_problem (irrealis_bayes.tests.FunctionalTestPMF)
+    test_monty_hall_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
 
     From Think Bayes:
 
@@ -172,7 +172,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_cookie_problem(self):
     '''
-    test_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
+    test_cookie_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
 
     As in previous example, but using BayesPMF subclass with likelihood().
     implemented.
@@ -194,7 +194,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_MnM_problem(self):
     '''
-    test_MnM_problem (irrealis_bayes.tests.FunctionalTestPMF)
+    test_MnM_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
     
     From Think Bayes:
 
@@ -229,7 +229,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_cookie_problem_sans_replacement(self):
     '''
-    test_cookie_problem_sans_replacement (irrealis_bayes.tests.FunctionalTestPMF)
+    test_cookie_problem_sans_replacement (irrealis_bayes.tests.FunctionalTestBayesPMF)
 
     As before, two cookie bowls, the first containing 30 vanilla and ten
     chocolate cookies, the second twenty of each. You choose one of the bowls
@@ -313,7 +313,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_dice_problem(self):
     '''
-    test_dice_problem (irrealis_bayes.tests.FunctionalTestPMF)
+    test_dice_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
 
     From Think Bayes:
     
