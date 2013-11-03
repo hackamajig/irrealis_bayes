@@ -335,7 +335,8 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     '''
     # The likelihood of a roll (our data) greater than the number of sides of a
     # given die (our hypothesis) is zero; in other words, P(data|hypothesis) =
-    # 0 if hypothesis < data).
+    # 0 if hypothesis < data). Otherwise, the likelihood of seeing any side of
+    # an N-sided die is 1/N.
     class DiceProblem(BayesPMF):
       def likelihood(self, data, given_hypothesis):
         return 0 if given_hypothesis < data else 1./given_hypothesis
