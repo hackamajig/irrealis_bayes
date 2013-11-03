@@ -15,10 +15,11 @@ class PMF(dict):
     return 1./total if total else float('inf')
 
   def scale(self, factor):
+    '''Scale all measures by a common factor.'''
     for key in self: self[key] *= factor
 
   def normalize(self):
-    '''Normalize all probabilities (so they sum to one).'''
+    '''Normalize all measures so they sum to one, making this a probability distribution.'''
     self.scale(self.get_normalizer())
 
 
@@ -37,7 +38,7 @@ class BayesPMF(PMF):
     for hypothesis in hypotheses: self[hypothesis] = 1
 
   def update(self, data):
-    '''Updates posterior  probability distribution given new data.'''
+    '''Updates posterior probability distribution given new data.'''
     for hypothesis in self:
       self[hypothesis] *= self.likelihood(data, given = hypothesis)
     self.normalize()
