@@ -10,6 +10,14 @@ Demo usage
 
 I've placed commented demos in the test cases defined in "irrealis_bayes/tests.py".
 
+Three-step modeling strategy
+============================
+See test FunctionalTestPMF.test_dice_problem() in "irrealis_bayes/tests.py" for
+discussion:
+1. Choose a representation for the hypotheses.
+2. Choose a representation for the data.
+3. Write the likelihood function.
+
 How to run tests
 ================
 

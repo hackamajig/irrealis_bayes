@@ -37,7 +37,7 @@ class UnitTestPMF(unittest.TestCase):
 
   def test_copy(self):
     '''
-    test_copy
+    test_copy (irrealis_bayes.tests.UnitTestPMF)
 
     Verify that pmf.copy() copies data into a new, independent PMF instance.
     '''
@@ -51,7 +51,7 @@ class UnitTestPMF(unittest.TestCase):
 class FunctionalTestPMF(unittest.TestCase):
   def test_cookie_problem(self):
     '''
-    test_cookie_problem
+    test_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     From Think Bayes:
 
@@ -88,7 +88,7 @@ class FunctionalTestPMF(unittest.TestCase):
 
   def test_cookie_problem_with_arbitrary_factors(self):
     '''
-    test_cookie_problem_with_arbitrary_factors
+    test_cookie_problem_with_arbitrary_factors (irrealis_bayes.tests.FunctionalTestPMF)
 
     Can multiply dictionary by any convenient factor, as long as the whole
     dictionary is multiplied by that factor. We later normalize to get a
@@ -112,7 +112,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_monty_hall_problem(self):
     '''
-    test_monty_hall_problem
+    test_monty_hall_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     From Think Bayes:
 
@@ -172,7 +172,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_cookie_problem(self):
     '''
-    test_cookie_problem
+    test_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     As in previous example, but using BayesPMF subclass with likelihood().
     implemented.
@@ -194,7 +194,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_MnM_problem(self):
     '''
-    test_MnM_problem
+    test_MnM_problem (irrealis_bayes.tests.FunctionalTestPMF)
     
     From Think Bayes:
 
@@ -229,7 +229,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_cookie_problem_sans_replacement(self):
     '''
-    test_cookie_problem_sans_replacement
+    test_cookie_problem_sans_replacement (irrealis_bayes.tests.FunctionalTestPMF)
 
     As before, two cookie bowls, the first containing 30 vanilla and ten
     chocolate cookies, the second twenty of each. You choose one of the bowls
@@ -310,6 +310,48 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     self.assertTrue(0.599 < pmf['A'] < 0.601)
     pmf.update(('bowl_a', 'vanilla'))
     self.assertTrue(0.696 < pmf['A'] < 0.697)
+
+  def test_dice_problem(self):
+    '''
+    test_dice_problem (irrealis_bayes.tests.FunctionalTestPMF)
+
+    From Think Bayes:
+    
+      Suppose I have a box of dice that contains a 4-sided die, a 6-sided die,
+      an 8-sided die, a 12-sided die, and a 20-sided die. If you have ever
+      played Dungeons & Dragons, you know what I am talking about.
+
+      Suppose I select a die from the box at random, roll it, and get a 6. What
+      is the probability that I rolled each die?
+
+      Let me suggest a three-step strategy for approaching a problem like this:
+      - Choose a representation for the hypotheses.
+      - Choose a representation for the data.
+      - Write a likelihood function.
+
+    In this case, Downey chooses the numbers [4, 6, 8, 12, 20] to represent
+    hypotheses, and integers one through twenty to represent data. These
+    representations are chosing to make the likelihood function easy to write:
+    '''
+    class DiceProblem(BayesPMF):
+      def likelihood(self, data, given): return 0 if given < data else 1./given
+
+    pmf = DiceProblem()
+    pmf.uniform_priors([4,6,8,12,20])
+
+    pmf.update(6)
+    self.assertEqual(0., pmf[4])
+    self.assertTrue(0.392 < pmf[6] < 0.393)
+    self.assertTrue(0.294 < pmf[8] < 0.295)
+    self.assertTrue(0.196 < pmf[12] < 0.197)
+    self.assertTrue(0.117 < pmf[20] < 0.118)
+
+    for roll in (6,8,7,7,5,4): pmf.update(roll)
+    self.assertEqual(0., pmf[4])
+    self.assertEqual(0., pmf[6])
+    self.assertTrue(0.943 < pmf[8] < 0.944)
+    self.assertTrue(0.055 < pmf[12] < 0.056)
+    self.assertTrue(0.001 < pmf[20] < 0.002)
 
 
 if __name__ == "__main__": unittest.main()
