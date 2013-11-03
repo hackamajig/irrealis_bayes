@@ -158,9 +158,9 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     class MontyHallProblem(BayesPMF):
       def __init__(self, *al, **kw):
         super(MontyHallProblem, self).__init__(*al, **kw)
-      def likelihood(self, data, given):
-        if given == data: return 0
-        elif given == 'a': return 0.5
+      def likelihood(self, data, given_hypothesis):
+        if given_hypothesis == data: return 0
+        elif given_hypothesis == 'a': return 0.5
         else: return 1
         
     pmf = MontyHallProblem()
@@ -185,8 +185,8 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           bowl_2 = PMF(vanilla = 20, chocolate = 20),
         )
         self.uniform_priors(self.hypotheses)
-      def likelihood(self, data, given):
-        return self.hypotheses[given][data]
+      def likelihood(self, data, given_hypothesis):
+        return self.hypotheses[given_hypothesis][data]
         
     pmf = CookieProblem()
     pmf.update('vanilla')
@@ -218,9 +218,9 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           B = dict(bag_1 = mix96, bag_2 = mix94),
         )
         self.uniform_priors(self.hypotheses)
-      def likelihood(self, data, given):
+      def likelihood(self, data, given_hypothesis):
         bag, color = data
-        return self.hypotheses[given][bag][color]
+        return self.hypotheses[given_hypothesis][bag][color]
         
     pmf = MnMProblem()
     pmf.update(('bag_1', 'yellow'))
@@ -293,15 +293,15 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           B = dict(bowl_a = bowl_2.copy(), bowl_b = bowl_1.copy()),
         )
         self.uniform_priors(self.hypotheses)
-      def likelihood(self, data, given):
+      def likelihood(self, data, given_hypothesis):
         bowl, cookie = data
         # First we obtain a copy of the distribution for given hypothesis.
-        distribution = self.hypotheses[given][bowl].copy()
+        distribution = self.hypotheses[given_hypothesis][bowl].copy()
         # The we normalize the copy so we can compute the likelihood.
         distribution.normalize()
         likelihood = distribution[cookie]
         # Then we update the state of the hypothesis.
-        self.hypotheses[given][bowl][cookie] -= 1
+        self.hypotheses[given_hypothesis][bowl][cookie] -= 1
         # Now we can return the computed likelihood.
         return likelihood
 
@@ -333,8 +333,12 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     hypotheses, and integers one through twenty to represent data. These
     representations are chosen to make the likelihood function easy to write:
     '''
+    # The likelihood of a roll (our data) greater than the number of sides of a
+    # given die (our hypothesis) is zero; in other words, P(data|hypothesis) =
+    # 0 if hypothesis < data).
     class DiceProblem(BayesPMF):
-      def likelihood(self, data, given): return 0 if given < data else 1./given
+      def likelihood(self, data, given_hypothesis):
+        return 0 if given_hypothesis < data else 1./given_hypothesis
 
     pmf = DiceProblem()
     pmf.uniform_priors([4,6,8,12,20])

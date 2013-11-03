@@ -40,10 +40,10 @@ class BayesPMF(PMF):
   def update(self, data):
     '''Updates posterior probability distribution given new data.'''
     for hypothesis in self:
-      self[hypothesis] *= self.likelihood(data, given = hypothesis)
+      self[hypothesis] *= self.likelihood(data, given_hypothesis = hypothesis)
     self.normalize()
 
-  def likelihood(self, data, given):
+  def likelihood(self, data, given_hypothesis):
     '''
     Returns likelihood of observed data given a hypothesis. Unimplemented.
     Should be implemented in subclasses.
