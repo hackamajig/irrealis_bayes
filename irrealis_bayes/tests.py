@@ -21,13 +21,13 @@ class UnitTestPMF(unittest.TestCase):
   def test_normalizer(self):
     self.assertTrue(0.199 < self.pmf.normalizer() < 0.201)
 
-  def test_mean(self):
+  def test_expectation(self):
     pmf = PMF.fromkeys((1,2,3), 1.)
     pmf.normalize()
-    self.assertTrue(1.999 < pmf.mean() < 2.001)
+    self.assertTrue(1.999 < pmf.expectation() < 2.001)
 
-  def test_mean_raises_on_nonnumeric_hypothesis(self):
-    with self.assertRaises(TypeError): self.pmf.mean()
+  def test_expectation_raises_on_nonnumeric_hypothesis(self):
+    with self.assertRaises(TypeError): self.pmf.expectation()
 
   def test_ints(self):
     self.exercise_pmf()
@@ -407,9 +407,9 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     self.assertEqual(60, most_likely_hypothesis)
     self.assertTrue(0.005 < max_likelihood < 0.006)
 
-    # That might not be the right goal. An alternative is to compute the mean
-    # of the posterior distribution:
-    self.assertTrue(333 < pmf.mean() < 334)
+    # That might not be the right goal. An alternative is to compute the
+    # expectation of the posterior distribution:
+    self.assertTrue(333 < pmf.expectation() < 334)
 
 
 if __name__ == "__main__": unittest.main()

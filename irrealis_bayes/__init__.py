@@ -14,11 +14,11 @@ class PMF(dict):
     total = self.total()
     return 1./total if total else float('inf')
 
-  def mean(self):
+  def expectation(self):
     try:
       return sum(hyp*prb for hyp, prb in self.iteritems())
     except TypeError as e:
-      raise TypeError("PMF object can't compute mean of non-numeric hypotheses ({})".format(e))
+      raise TypeError("PMF object can't compute expectation of non-numeric hypotheses ({})".format(e))
 
   def scale(self, factor):
     '''Scale all measures by a common factor.'''
