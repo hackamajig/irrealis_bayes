@@ -6,11 +6,11 @@ import unittest
 
 class UnitTestPMF(unittest.TestCase):
   def setUp(self):
-    self.pmf = PMF(dict.fromkeys('abcde', 1))
+    self.pmf = PMF.fromkeys('abcde', 1)
 
   def exercise_pmf(self):
     self.pmf.normalize()
-    # Should have six entries corresponding to 'a' through 'f'.
+    # Should have five entries corresponding to 'a' through 'f'.
     self.assertEqual(5, len(self.pmf))
     # Sum should be one to within rounding error.
     self.assertTrue(0.999 < sum(self.pmf.itervalues()) < 1.001)
@@ -25,6 +25,16 @@ class UnitTestPMF(unittest.TestCase):
     pmf = PMF.fromkeys((1,2,3), 1.)
     pmf.normalize()
     self.assertTrue(1.999 < pmf.expectation() < 2.001)
+
+  def test_uniform_dist(self):
+    self.pmf = PMF()
+    # Verify that pmf is cleared when new hypotheses are applied.
+    self.pmf.uniform_dist('ABCDEF')
+    self.assertEqual(6, len(self.pmf))
+    self.pmf.uniform_dist('abcde')
+    self.assertEqual(5, len(self.pmf))
+    # Sum should be one to within rounding error.
+    self.assertTrue(0.999 < sum(self.pmf.itervalues()) < 1.001)
 
   def test_expectation_raises_on_nonnumeric_hypothesis(self):
     with self.assertRaises(TypeError): self.pmf.expectation()
@@ -172,7 +182,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
         else: return 1
         
     pmf = MontyHallProblem()
-    pmf.uniform_priors('abc')
+    pmf.uniform_dist('abc')
     pmf.update('b')
     self.assertTrue(0.333 < pmf['a'] < 0.334)
     self.assertTrue(0 <= pmf['b'] < 0.001)
@@ -192,7 +202,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           bowl_1 = PMF(vanilla = 30, chocolate = 10),
           bowl_2 = PMF(vanilla = 20, chocolate = 20),
         )
-        self.uniform_priors(self.hypotheses)
+        self.uniform_dist(self.hypotheses)
       def likelihood(self, data, given_hypothesis):
         return self.hypotheses[given_hypothesis][data]
         
@@ -225,7 +235,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           A = dict(bag_1 = mix94, bag_2 = mix96),
           B = dict(bag_1 = mix96, bag_2 = mix94),
         )
-        self.uniform_priors(self.hypotheses)
+        self.uniform_dist(self.hypotheses)
       def likelihood(self, data, given_hypothesis):
         bag, color = data
         return self.hypotheses[given_hypothesis][bag][color]
@@ -300,7 +310,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           A = dict(bowl_a = bowl_1.copy(), bowl_b = bowl_2.copy()),
           B = dict(bowl_a = bowl_2.copy(), bowl_b = bowl_1.copy()),
         )
-        self.uniform_priors(self.hypotheses)
+        self.uniform_dist(self.hypotheses)
       def likelihood(self, data, given_hypothesis):
         bowl, cookie = data
         # First we obtain a copy of the distribution for given hypothesis.
@@ -350,7 +360,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
         return 0 if given_hypothesis < data else 1./given_hypothesis
 
     pmf = DiceProblem()
-    pmf.uniform_priors([4,6,8,12,20])
+    pmf.uniform_dist([4,6,8,12,20])
 
     pmf.update(6)
     self.assertEqual(0., pmf[4])
@@ -395,7 +405,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     # something simple and then consider alternatives. Let's assume that N is
     # equally likely to be any value from 1 to 1000.
     pmf = LocomotiveProblem()
-    pmf.uniform_priors(xrange(1, 1001))
+    pmf.uniform_dist(xrange(1, 1001))
     pmf.update(60)
     most_likely_hypothesis, max_likelihood = max(pmf.iteritems(), key = lambda x: x[1])
 

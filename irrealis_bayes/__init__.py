@@ -18,7 +18,7 @@ class PMF(dict):
     try:
       return sum(hyp*prb for hyp, prb in self.iteritems())
     except TypeError as e:
-      raise TypeError("PMF object can't compute expectation of non-numeric hypotheses ({})".format(e))
+      raise TypeError("Can't compute expectation of non-numeric hypotheses ({})".format(e))
 
   def scale(self, factor):
     '''Scale all measures by a common factor.'''
@@ -27,6 +27,12 @@ class PMF(dict):
   def normalize(self):
     '''Normalize all measures so they sum to one, making this a probability distribution.'''
     self.scale(self.normalizer())
+
+  def uniform_dist(self, hypotheses):
+    '''Assign equal probabilities to each of a list of hypotheses.'''
+    self.clear()
+    for hypothesis in hypotheses: self[hypothesis] = 1
+    self.normalize()
 
 
 class BayesPMF(PMF):
@@ -38,10 +44,6 @@ class BayesPMF(PMF):
   '''
   def __init__(self, *al, **kw):
     super(BayesPMF, self).__init__(*al, **kw)
-
-  def uniform_priors(self, hypotheses):
-    '''Assign equal probabilities to each of a list of hypotheses.'''
-    for hypothesis in hypotheses: self[hypothesis] = 1
 
   def update(self, data):
     '''Updates posterior probability distribution given new data.'''
