@@ -34,6 +34,12 @@ class PMF(dict):
     for hypothesis in hypotheses: self[hypothesis] = 1
     self.normalize()
 
+  def power_law_dist(self, hypotheses, alpha=1.):
+    '''Assign power law distribution to each of a list of quantitative hypotheses.'''
+    self.clear()
+    for hypothesis in hypotheses: self[hypothesis] = hypothesis**(-alpha)
+    self.normalize()
+
 
 class BayesPMF(PMF):
   '''

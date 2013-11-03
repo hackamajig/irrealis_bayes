@@ -27,14 +27,26 @@ class UnitTestPMF(unittest.TestCase):
     self.assertTrue(1.999 < pmf.expectation() < 2.001)
 
   def test_uniform_dist(self):
-    self.pmf = PMF()
     # Verify that pmf is cleared when new hypotheses are applied.
     self.pmf.uniform_dist('ABCDEF')
-    self.assertEqual(6, len(self.pmf))
     self.pmf.uniform_dist('abcde')
     self.assertEqual(5, len(self.pmf))
     # Sum should be one to within rounding error.
     self.assertTrue(0.999 < sum(self.pmf.itervalues()) < 1.001)
+    # Verify all probilities are equal.
+    for value in self.pmf.itervalues(): self.assertTrue(0.199 < value < 0.201)
+
+  def test_power_law_dist(self):
+    # Verify that pmf is cleared when new hypotheses are applied.
+    self.pmf.uniform_dist('ABCDEF')
+    self.pmf.power_law_dist(xrange(1, 4))
+    self.assertEqual(3, len(self.pmf))
+    # Sum should be one to within rounding error.
+    self.assertTrue(0.999 < sum(self.pmf.itervalues()) < 1.001)
+    # Verify probilities.
+    self.assertTrue(0.545 < self.pmf[1] < 0.546)
+    self.assertTrue(0.272 < self.pmf[2] < 0.273)
+    self.assertTrue(0.181 < self.pmf[3] < 0.182)
 
   def test_expectation_raises_on_nonnumeric_hypothesis(self):
     with self.assertRaises(TypeError): self.pmf.expectation()
