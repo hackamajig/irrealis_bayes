@@ -331,7 +331,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
     In this case, Downey chooses the numbers [4, 6, 8, 12, 20] to represent
     hypotheses, and integers one through twenty to represent data. These
-    representations are chosing to make the likelihood function easy to write:
+    representations are chosen to make the likelihood function easy to write:
     '''
     class DiceProblem(BayesPMF):
       def likelihood(self, data, given): return 0 if given < data else 1./given
