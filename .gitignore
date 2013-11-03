@@ -1,0 +1,8 @@
+# Vim swapfiles
+*.sw?
+
+# Byte-compiled Python
+*.py?
+
+# Test coverage
+.coverage
