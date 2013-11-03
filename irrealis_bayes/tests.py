@@ -311,4 +311,5 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     pmf.update(('bowl_a', 'vanilla'))
     self.assertTrue(0.696 < pmf['A'] < 0.697)
 
+
 if __name__ == "__main__": unittest.main()
