@@ -248,7 +248,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     same bowl. The cookie is again vanilla. What is the new probability that it
     came from the first bowl?
 
-    The problem is vary similar, but our previous posterior probabilities have
+    The problem is very similar, but our previous posterior probabilities have
     become our new prior probabilities, and our likelihoods have also changed:
 
       P(bowl_1) = 0.6
