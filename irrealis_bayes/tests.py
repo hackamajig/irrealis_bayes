@@ -21,6 +21,14 @@ class UnitTestPMF(unittest.TestCase):
   def test_normalizer(self):
     self.assertTrue(0.199 < self.pmf.normalizer() < 0.201)
 
+  def test_mean(self):
+    pmf = PMF.fromkeys((1,2,3), 1.)
+    pmf.normalize()
+    self.assertTrue(1.999 < pmf.mean() < 2.001)
+
+  def test_mean_raises_on_nonnumeric_hypothesis(self):
+    with self.assertRaises(TypeError): self.pmf.mean()
+
   def test_ints(self):
     self.exercise_pmf()
 
