@@ -53,30 +53,32 @@ class FunctionalTestPMF(unittest.TestCase):
     '''
     test_cookie_problem
 
-    Suppose there are two bowls of cookies. The first bowl contains 30 vanilla
-    cookies and ten chocolate cookies. The second bowl contains twenty of each.
-    Now suppose you choose one of the bowls at random and, without looking,
-    select a cookie from bowl at random. The cookie is vanilla. What is the
-    probability that it came from the first bowl?
+    From Think Bayes:
 
-    Prior to choosing the cookie, the probability P(bowl_1) of choosing the
-    first bowl was 0.5 (since we were equally likely to choose either bowl).
+      Suppose there are two bowls of cookies. The first bowl contains 30
+      vanilla cookies and ten chocolate cookies. The second bowl contains
+      twenty of each.  Now suppose you choose one of the bowls at random and,
+      without looking, select a cookie from bowl at random. The cookie is
+      vanilla. What is the probability that it came from the first bowl?
 
-    Assuming we had chosen the first bowl, the likelihood P(vanilla | bowl_1)
-    of choosing a vanilla cookie was 0.75 (30 vanilla cookies out a total of
-    forty cookies in the first bowl). On the other hand, assuming we had chosen
-    the second bowl, the likelihood P(vanilla | bowl_2) of choosing a vanilla
-    cookie was 0.5 (twenty vanilla cookies out of 40 cookies in the second
-    bowl).
+      Prior to choosing the cookie, the probability P(bowl_1) of choosing the
+      first bowl was 0.5 (since we were equally likely to choose either bowl).
 
-    Since our hypotheses (bowl one or bowl two) are exclusive and exhaustive,
-    the law of total probability gives:
-    
-      P(bowl_1 | vanilla)
-      = (P(bowl_1)*P(vanilla | bowl_1)) / (P(bowl_1)*P(vanilla | bowl_1) + P(bowl_2)*P(vanilla | bowl_2))
-      = (0.5*0.75)/(0.5*0.75 + 0.5*0.5)
-      = (0.75)/(0.75 + 0.5)
-      = 0.6
+      Assuming we had chosen the first bowl, the likelihood P(vanilla | bowl_1)
+      of choosing a vanilla cookie was 0.75 (30 vanilla cookies out a total of
+      forty cookies in the first bowl). On the other hand, assuming we had
+      chosen the second bowl, the likelihood P(vanilla | bowl_2) of choosing a
+      vanilla cookie was 0.5 (twenty vanilla cookies out of 40 cookies in the
+      second bowl).
+
+      Since our hypotheses (bowl one or bowl two) are exclusive and exhaustive,
+      the law of total probability gives:
+      
+        P(bowl_1 | vanilla)
+        = (P(bowl_1)*P(vanilla | bowl_1)) / (P(bowl_1)*P(vanilla | bowl_1) + P(bowl_2)*P(vanilla | bowl_2))
+        = (0.5*0.75)/(0.5*0.75 + 0.5*0.5)
+        = (0.75)/(0.75 + 0.5)
+        = 0.6
     '''
     pmf = PMF(bowl_1 = 0.5, bowl_2 = 0.5)
     pmf['bowl_1'] *= 0.75
@@ -182,7 +184,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           bowl_1 = PMF(vanilla = 30, chocolate = 10),
           bowl_2 = PMF(vanilla = 20, chocolate = 20),
         )
-        self.uniform_priors(self.hypotheses.iterkeys())
+        self.uniform_priors(self.hypotheses)
       def likelihood(self, data, given):
         return self.hypotheses[given][data]
         
@@ -215,7 +217,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
           A = dict(bag_1 = mix94, bag_2 = mix96),
           B = dict(bag_1 = mix96, bag_2 = mix94),
         )
-        self.uniform_priors(self.hypotheses.iterkeys())
+        self.uniform_priors(self.hypotheses)
       def likelihood(self, data, given):
         bag, color = data
         return self.hypotheses[given][bag][color]
@@ -225,6 +227,88 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     pmf.update(('bag_2', 'green'))
     self.assertTrue(0.740 < pmf['A'] < 0.741)
 
+  def test_cookie_problem_sans_replacement(self):
+    '''
+    test_cookie_problem_sans_replacement
 
+    As before, two cookie bowls, the first containing 30 vanilla and ten
+    chocolate cookies, the second twenty of each. You choose one of the bowls
+    at random and, without looking, select a random cookie from the bowl. The
+    cookie is vanilla. What is the probability it came from the first bowl?
+
+    P(vanilla) = P(bowl_1)*P(vanilla|bowl_1) + P(bowl_2)*P(vanilla|bowl_2)
+
+    P(bowl_1|vanilla) = P(bowl_1)*P(vanilla|bowl_1)/P(vanilla)
+
+    = (0.5*0.75)/(0.5*0.75 + 0.5*0.5)
+    = (0.75)/(0.75 + 0.5)
+    = 0.6
+
+    Now, without putting the first cookie back, take a second cookie from the
+    same bowl. The cookie is again vanilla. What is the new probability that it
+    came from the first bowl?
+
+    The problem is vary similar, but our previous posterior probabilities have
+    become our new prior probabilities, and our likelihoods have also changed:
+
+      P(bowl_1) = 0.6
+      P(bowl_2) = 0.4
+      P(vanilla | bowl_1) = 29/39 ~= 0.744
+      P(vanilla | bowl_2) = 19/39 ~= 0.487
+      P(bowl_1 | vanilla) = (0.6*0.744)/(0.6*0.744 + 0.4*0.487)
+      ~= 0.696
+    '''
+    class CookieProblem(BayesPMF):
+      '''
+      We have two hypotheses:
+      - A: bowl_a is bowl_1 (30 vanilla, 10 chocolate),
+        and bowl_b is bowl_2 (20 vanilla, 20 chocolate).
+      - B: bowl_a is bowl_2 (20 vanilla, 20 chocolate),
+        and bowl_b is bowl_1 (30 vanilla, 10 chocolate).
+      
+      As we gather data, we update each hypothesis. For example, if we choose a
+      vanilla cookie from bowl a, then our new hypotheses are:
+      - A: bowl_a is bowl_1 (29 vanilla, 10 chocolate),
+        and bowl_b is bowl_2 (20 vanilla, 20 chocolate).
+      - B: bowl_a is bowl_2 (19 vanilla, 20 chocolate),
+        and bowl_b is bowl_1 (30 vanilla, 10 chocolate).
+      
+      Since the total numbers of cookies in each bowl are now different, we
+      must normalize the distributions in each hypothesis before computing
+      likelihoods. But if we were to normalize the state variables of each
+      hypothesis, we wouldn't be able to update hypotheses anymore. So instead
+      of normalizing the distributions in the state variables of hypotheses, we
+      make normalized copies of the distributions, and use these copies for
+      computing likelihoods.
+      '''
+      def __init__(self, *al, **kw):
+        super(CookieProblem, self).__init__(*al, **kw)
+        # These encode the initial state of the bowls.
+        bowl_1 = PMF(vanilla=30, chocolate=10)
+        bowl_2 = PMF(vanilla=20, chocolate=20)
+        self.hypotheses = dict(
+          # The states of the different hypotheses mustn't depend on each
+          # other, so each hypothesis gets its own copy of the initial state.
+          A = dict(bowl_a = bowl_1.copy(), bowl_b = bowl_2.copy()),
+          B = dict(bowl_a = bowl_2.copy(), bowl_b = bowl_1.copy()),
+        )
+        self.uniform_priors(self.hypotheses)
+      def likelihood(self, data, given):
+        bowl, cookie = data
+        # First we obtain a copy of the distribution for given hypothesis.
+        distribution = self.hypotheses[given][bowl].copy()
+        # The we normalize the copy so we can compute the likelihood.
+        distribution.normalize()
+        likelihood = distribution[cookie]
+        # Then we update the state of the hypothesis.
+        self.hypotheses[given][bowl][cookie] -= 1
+        # Now we can return the computed likelihood.
+        return likelihood
+
+    pmf = CookieProblem()
+    pmf.update(('bowl_a', 'vanilla'))
+    self.assertTrue(0.599 < pmf['A'] < 0.601)
+    pmf.update(('bowl_a', 'vanilla'))
+    self.assertTrue(0.696 < pmf['A'] < 0.697)
 
 if __name__ == "__main__": unittest.main()
