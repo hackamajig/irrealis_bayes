@@ -110,6 +110,8 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_monty_hall_problem(self):
     '''
+    test_monty_hall_problem
+
     From Think Bayes:
 
       The Monty Hall problem might be the most contentious question in the
@@ -188,6 +190,40 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     pmf.update('vanilla')
     self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
 
+  def test_MnM_problem(self):
+    '''
+    test_MnM_problem
+    
+    From Think Bayes:
+
+      In 1995, they introduced blue M&M's. Before then, the color mix in a bag
+      of plain M&M's was 30% Brown, 20% Yellow, 20% Red, 10% Green, 10% Orange,
+      10% Tan. Afterward it was 24% Blue, 20% Green, 16% Orange, 14% Yellow,
+      13% Red, 13% Brown.
+
+      Suppose a friend of mine has two bags of M&M's, and he tells me that one
+      is from 1994 and one from 1996. He won't tell me which is which, but he
+      gives me one M&M from each bag. One is yellow and one is green. What is
+      the probability that the yellow one came from the 1994 bag?
+    '''
+    class MnMProblem(BayesPMF):
+      def __init__(self, *al, **kw):
+        super(MnMProblem, self).__init__(*al, **kw)
+        mix94 = PMF(brown=30, yellow=20, red=20, green=10, orange=10, tan=10)
+        mix96 = PMF(blue=24, green=20, orange=16, yellow=14, red=13, brown=13)
+        self.hypotheses = dict(
+          A = dict(bag_1 = mix94, bag_2 = mix96),
+          B = dict(bag_1 = mix96, bag_2 = mix94),
+        )
+        self.uniform_priors(self.hypotheses.iterkeys())
+      def likelihood(self, data, given):
+        bag, color = data
+        return self.hypotheses[given][bag][color]
+        
+    pmf = MnMProblem()
+    pmf.update(('bag_1', 'yellow'))
+    pmf.update(('bag_2', 'green'))
+    self.assertTrue(0.740 < pmf['A'] < 0.741)
 
 
 
