@@ -1,4 +1,5 @@
-from irrealis_bayes import PMF
+# -*- coding: utf-8 -*-
+from irrealis_bayes import PMF, BayesPMF
 
 import unittest
 
@@ -100,6 +101,70 @@ class FunctionalTestPMF(unittest.TestCase):
     # This normalizes dictionary into a probability distribution.
     pmf.normalize()
     self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
+
+
+class FunctionalTestBayesPMF(unittest.TestCase):
+  def test_unimplemented_likelihood_raises(self):
+    pmf = BayesPMF(x = 2)
+    with self.assertRaises(NotImplementedError): pmf.update('blah')
+
+  def test_monty_hall_problem(self):
+    '''
+    From Think Bayes:
+
+      The Monty Hall problem might be the most contentious question in the
+      his-tory of probability. The scenario is simple, but the correct answer
+      is so counterintuitive that many people just can't accept it, and many
+      smart people have embarrassed themselves not just by getting it wrong but
+      by arguing the wrong side, aggressively, in public.
+
+      Monty Hall was the original host of the game show Let's Make a Deal. The
+      Monty Hall problem is based on one of the regular games on the show. If
+      you are on the show, here's what happens:
+
+      - Monty shows you three closed doors and tells you that there is a prize
+        behind each door: one prize is a car, the other two are less valuable
+        prizes like peanut butter and fake finger nails. The prizes are
+        arranged at random.
+
+      - The object of the game is to guess which door has the car.  If you
+        guess right, you get to keep the car.
+
+      - You pick a door, which we will call Door A. We'll call the other doors
+        B and C.
+
+      - Before opening the door you chose, Monty increases the suspense by
+        opening either Door B or C, whichever does not have the car. (If the
+        car is actually behind Door A, Monty can safely open B or C, so he
+        chooses one at random.)
+
+      - Then Monty offers you the option to stick with your original choice or
+        switch to the one remaining unopened door.
+       
+      The question is, should you “stick” or “switch” or does it make no
+      difference?
+
+      Most people have the strong intuition that it makes no difference. There
+      are two doors left, they reason, so the chance that the car is behind
+      Door A is 50%.
+
+      But that is wrong. In fact, the chance of winning if you stick with Door
+      A is only 1/3; if you switch, your chances are 2/3.
+    '''
+    class MontyHallProblem(BayesPMF):
+      def __init__(self, *al, **kw):
+        super(MontyHallProblem, self).__init__(*al, **kw)
+      def likelihood(self, data, given):
+        if given == data: return 0
+        elif given == 'a': return 0.5
+        else: return 1
+        
+    pmf = MontyHallProblem.fromkeys('abc', 1)
+    pmf.update('b')
+    self.assertTrue(0.333 < pmf['a'] < 0.334)
+    self.assertTrue(0 <= pmf['b'] < 0.001)
+    self.assertTrue(0.666 < pmf['c'] < 0.667)
+
 
 
 if __name__ == "__main__": unittest.main()
