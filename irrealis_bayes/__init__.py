@@ -7,11 +7,11 @@ class PMF(dict):
   def copy(self):
     return self.__class__(self)
 
-  def get_total(self):
+  def total(self):
     return sum(self.itervalues())
 
-  def get_normalizer(self):
-    total = self.get_total()
+  def normalizer(self):
+    total = self.total()
     return 1./total if total else float('inf')
 
   def scale(self, factor):
@@ -20,7 +20,7 @@ class PMF(dict):
 
   def normalize(self):
     '''Normalize all measures so they sum to one, making this a probability distribution.'''
-    self.scale(self.get_normalizer())
+    self.scale(self.normalizer())
 
 
 class BayesPMF(PMF):

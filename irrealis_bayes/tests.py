@@ -15,11 +15,11 @@ class UnitTestPMF(unittest.TestCase):
     # Sum should be one to within rounding error.
     self.assertTrue(0.999 < sum(self.pmf.itervalues()) < 1.001)
 
-  def test_get_total(self):
-    self.assertEqual(5, self.pmf.get_total())
+  def test_total(self):
+    self.assertEqual(5, self.pmf.total())
 
-  def test_get_normalizer(self):
-    self.assertTrue(0.199 < self.pmf.get_normalizer() < 0.201)
+  def test_normalizer(self):
+    self.assertTrue(0.199 < self.pmf.normalizer() < 0.201)
 
   def test_ints(self):
     self.exercise_pmf()
