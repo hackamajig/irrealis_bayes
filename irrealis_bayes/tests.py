@@ -159,11 +159,35 @@ class FunctionalTestBayesPMF(unittest.TestCase):
         elif given == 'a': return 0.5
         else: return 1
         
-    pmf = MontyHallProblem.fromkeys('abc', 1)
+    pmf = MontyHallProblem()
+    pmf.uniform_priors('abc')
     pmf.update('b')
     self.assertTrue(0.333 < pmf['a'] < 0.334)
     self.assertTrue(0 <= pmf['b'] < 0.001)
     self.assertTrue(0.666 < pmf['c'] < 0.667)
+
+  def test_cookie_problem(self):
+    '''
+    test_cookie_problem
+
+    As in previous example, but using BayesPMF subclass with likelihood().
+    implemented.
+    '''
+    class CookieProblem(BayesPMF):
+      def __init__(self, *al, **kw):
+        super(CookieProblem, self).__init__(*al, **kw)
+        self.hypotheses = dict(
+          bowl_1 = PMF(vanilla = 30, chocolate = 10),
+          bowl_2 = PMF(vanilla = 20, chocolate = 20),
+        )
+        self.uniform_priors(self.hypotheses.iterkeys())
+      def likelihood(self, data, given):
+        return self.hypotheses[given][data]
+        
+    pmf = CookieProblem()
+    pmf.update('vanilla')
+    self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
+
 
 
 

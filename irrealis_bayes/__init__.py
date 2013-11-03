@@ -32,6 +32,10 @@ class BayesPMF(PMF):
   def __init__(self, *al, **kw):
     super(BayesPMF, self).__init__(*al, **kw)
 
+  def uniform_priors(self, hypotheses):
+    '''Assign equal probabilities to each of a list of hypotheses.'''
+    for hypothesis in hypotheses: self[hypothesis] = 1
+
   def update(self, data):
     '''Updates posterior  probability distribution given new data.'''
     for hypothesis in self:
