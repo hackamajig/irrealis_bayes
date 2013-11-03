@@ -398,14 +398,17 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     pmf.uniform_priors(xrange(1, 1001))
     pmf.update(60)
     most_likely_hypothesis, max_likelihood = max(pmf.iteritems(), key = lambda x: x[1])
+
     # The most likely hypothesis is 60 locomotives. That might not seem like a
     # very good guess; after all, what are the chances that you just happened
     # to see the train with the highest number? Nevertheless, if you want to
     # maximize the chance of getting the number exactly right, you should guess
-    # 60.
+    # 60:
     self.assertEqual(60, most_likely_hypothesis)
     self.assertTrue(0.005 < max_likelihood < 0.006)
-    # An alternative is to compute the mean of the posterior distribution:
+
+    # That might not be the right goal. An alternative is to compute the mean
+    # of the posterior distribution:
     self.assertTrue(333 < pmf.mean() < 334)
 
 
