@@ -434,7 +434,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     self.assertTrue(333 < pmf.expectation() < 334)
 
     # But if we use an upper bound of 500, we get a posterior expectation of
-    # 207, and if we use an upper bound of 200, we get a posterior expectation
+    # 207, and if we use an upper bound of 2000, we get a posterior expectation
     # of 552, which is bad:
     pmf.uniform_dist(xrange(1, 501))
     pmf.update(60)
