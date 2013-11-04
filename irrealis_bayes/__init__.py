@@ -77,3 +77,6 @@ class CDF(object):
   def percentile(self, probability):
     index = bisect.bisect(self.cumulative_distribution, probability)
     return self.hypotheses[(index-1) if probability==self.cumulative_distribution[index-1] else index]
+
+  def percentiles(self, *probabilities):
+    return tuple(self.percentile(probability) for probability in probabilities)

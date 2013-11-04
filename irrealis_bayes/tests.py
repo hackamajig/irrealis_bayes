@@ -97,6 +97,8 @@ class TestCDF(unittest.TestCase):
     self.assertEqual('e', self.cdf.percentile(0.9))
     self.assertEqual('e', self.cdf.percentile(1.0))
 
+  def test_percentiles(self):
+    self.assertEqual(('b', 'd'), self.cdf.percentiles(0.3, 0.8))
   
 
 class FunctionalTestPMF(unittest.TestCase):
@@ -489,6 +491,12 @@ class FunctionalTestPMF(unittest.TestCase):
     for n in (60, 30, 90): pmf.update(n)
     self.assertTrue(133 < pmf.expectation() < 134)
     # The expectations are now in  close agreement.
+
+    # We can determine a credible intervale for which there is a 90% chance
+    # that the answer (how many locomotives the railroad has) lies within the
+    # interval:
+    cdf = CDF(pmf.iteritems())
+    self.assertEqual((91, 243), cdf.percentiles(0.05, 0.95))
 
 
 if __name__ == "__main__": unittest.main()
