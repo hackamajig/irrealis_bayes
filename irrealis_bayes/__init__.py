@@ -16,13 +16,14 @@ class PMF(dict):
 
   def expectation(self):
     try:
-      return sum(hyp*prb for hyp, prb in self.iteritems())
+      return sum(hypo*prob for hypo, prob in self.iteritems())
     except TypeError as e:
       raise TypeError("Can't compute expectation of non-numeric hypotheses ({})".format(e))
 
   def scale(self, factor):
     '''Scale all measures by a common factor.'''
-    for key in self: self[key] *= factor
+    for key in self:
+      self[key] *= factor
 
   def normalize(self):
     '''Normalize all measures so they sum to one, making this a probability distribution.'''
@@ -31,13 +32,15 @@ class PMF(dict):
   def uniform_dist(self, hypotheses):
     '''Assign equal probabilities to each of a list of hypotheses.'''
     self.clear()
-    for hypothesis in hypotheses: self[hypothesis] = 1
+    for hypothesis in hypotheses:
+      self[hypothesis] = 1
     self.normalize()
 
   def power_law_dist(self, hypotheses, alpha=1.):
     '''Assign power law distribution to each of a list of quantitative hypotheses.'''
     self.clear()
-    for hypothesis in hypotheses: self[hypothesis] = hypothesis**(-alpha)
+    for hypothesis in hypotheses:
+      self[hypothesis] = hypothesis**(-alpha)
     self.normalize()
 
 
@@ -48,9 +51,6 @@ class BayesPMF(PMF):
   The update() method calls the likelihood() method, which should be
   implemented in subclasses.
   '''
-  def __init__(self, *al, **kw):
-    super(BayesPMF, self).__init__(*al, **kw)
-
   def update(self, data):
     '''Updates posterior probability distribution given new data.'''
     for hypothesis in self:
