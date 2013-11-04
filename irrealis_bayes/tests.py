@@ -458,7 +458,8 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     # expectations also converge. Downey observes a report by Axtell in Science
     # (http://www.sciencemag.org/content/293/5536/1818.full.pdf) that the
     # distribution of company sizes tends to follow a power law. So instead of
-    # using a uniform distribution, we can try a power-law distribution:
+    # using uniform distributions of priors, we can try power-law
+    # distributions:
     pmf.power_law_dist(xrange(1, 501))
     for n in (60, 30, 90): pmf.update(n)
     self.assertTrue(130 < pmf.expectation() < 131)
