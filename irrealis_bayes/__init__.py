@@ -68,12 +68,12 @@ class CDF(object):
     items = list(items)
     items.sort(cmp, key, reverse)
     self.hypotheses, probabilities = zip(*items)
-    percentile = 0
-    self.percentiles = []
+    total = 0
+    self.cumulative_distribution = []
     for probability in probabilities:
-      percentile += probability
-      self.percentiles.append(percentile)
+      total += probability
+      self.cumulative_distribution.append(total)
 
-  def hypothesis(self, percentile):
-    index = bisect.bisect(self.percentiles, percentile)
-    return self.hypotheses[(index-1) if percentile==self.percentiles[index-1] else index]
+  def percentile(self, probability):
+    index = bisect.bisect(self.cumulative_distribution, probability)
+    return self.hypotheses[(index-1) if probability==self.cumulative_distribution[index-1] else index]

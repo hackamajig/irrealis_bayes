@@ -78,6 +78,27 @@ class UnitTestPMF(unittest.TestCase):
       self.assertTrue(0.199 < pmf2[key] < 0.201)
 
 
+class TestCDF(unittest.TestCase):
+  def setUp(self):
+    self.pmf = PMF()
+    self.pmf.uniform_dist('abcde')
+    self.cdf = CDF(self.pmf.iteritems())
+
+  def test_percentile(self):
+    self.assertEqual('a', self.cdf.percentile(0.0))
+    self.assertEqual('a', self.cdf.percentile(0.1))
+    self.assertEqual('a', self.cdf.percentile(0.2))
+    self.assertEqual('b', self.cdf.percentile(0.3))
+    self.assertEqual('b', self.cdf.percentile(0.4))
+    self.assertEqual('c', self.cdf.percentile(0.5))
+    self.assertEqual('c', self.cdf.percentile(0.6))
+    self.assertEqual('d', self.cdf.percentile(0.7))
+    self.assertEqual('d', self.cdf.percentile(0.8))
+    self.assertEqual('e', self.cdf.percentile(0.9))
+    self.assertEqual('e', self.cdf.percentile(1.0))
+
+  
+
 class FunctionalTestPMF(unittest.TestCase):
   def test_basic_cookie_problem(self):
     '''
@@ -468,26 +489,6 @@ class FunctionalTestPMF(unittest.TestCase):
     for n in (60, 30, 90): pmf.update(n)
     self.assertTrue(133 < pmf.expectation() < 134)
     # The expectations are now in  close agreement.
-
-
-class TestCDF(unittest.TestCase):
-  def setUp(self):
-    self.pmf = PMF()
-    self.pmf.uniform_dist('abcde')
-    self.cdf = CDF(self.pmf.iteritems())
-
-  def test_hypothesis(self):
-    self.assertEqual('a', self.cdf.hypothesis(percentile = 0.0))
-    self.assertEqual('a', self.cdf.hypothesis(percentile = 0.1))
-    self.assertEqual('a', self.cdf.hypothesis(percentile = 0.2))
-    self.assertEqual('b', self.cdf.hypothesis(percentile = 0.3))
-    self.assertEqual('b', self.cdf.hypothesis(percentile = 0.4))
-    self.assertEqual('c', self.cdf.hypothesis(percentile = 0.5))
-    self.assertEqual('c', self.cdf.hypothesis(percentile = 0.6))
-    self.assertEqual('d', self.cdf.hypothesis(percentile = 0.7))
-    self.assertEqual('d', self.cdf.hypothesis(percentile = 0.8))
-    self.assertEqual('e', self.cdf.hypothesis(percentile = 0.9))
-    self.assertEqual('e', self.cdf.hypothesis(percentile = 1.0))
 
 
 if __name__ == "__main__": unittest.main()
