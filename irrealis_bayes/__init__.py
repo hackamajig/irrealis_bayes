@@ -1,3 +1,5 @@
+import bisect
+
 
 class PMF(dict):
   '''Dictionary as probability mass function.'''
@@ -56,3 +58,22 @@ class PMF(dict):
     '''
     raise NotImplementedError
 
+
+class CDF(object):
+  def __init__(self, items=None, cmp=None, key=None, reverse=False):
+    if not items:
+      items = []
+    if not key:
+      key = lambda x: x[0]
+    items = list(items)
+    items.sort(cmp, key, reverse)
+    self.hypotheses, probabilities = zip(*items)
+    percentile = 0
+    self.percentiles = []
+    for probability in probabilities:
+      percentile += probability
+      self.percentiles.append(percentile)
+
+  def hypothesis(self, percentile):
+    index = bisect.bisect(self.percentiles, percentile)
+    return self.hypotheses[(index-1) if percentile==self.percentiles[index-1] else index]
