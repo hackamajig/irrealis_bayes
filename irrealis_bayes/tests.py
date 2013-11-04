@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from irrealis_bayes import PMF, BayesPMF
+from irrealis_bayes import PMF
 
 import unittest
 
@@ -79,9 +79,9 @@ class UnitTestPMF(unittest.TestCase):
 
 
 class FunctionalTestPMF(unittest.TestCase):
-  def test_cookie_problem(self):
+  def test_basic_cookie_problem(self):
     '''
-    test_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
+    test_basic_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     From Think Bayes:
 
@@ -134,15 +134,13 @@ class FunctionalTestPMF(unittest.TestCase):
     pmf.normalize()
     self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
 
-
-class FunctionalTestBayesPMF(unittest.TestCase):
   def test_unimplemented_likelihood_raises(self):
-    pmf = BayesPMF(x = 2)
+    pmf = PMF(x = 2)
     with self.assertRaises(NotImplementedError): pmf.update('blah')
 
   def test_monty_hall_problem(self):
     '''
-    test_monty_hall_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
+    test_monty_hall_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     From Think Bayes:
 
@@ -185,7 +183,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
       But that is wrong. In fact, the chance of winning if you stick with Door
       A is only 1/3; if you switch, your chances are 2/3.
     '''
-    class MontyHallProblem(BayesPMF):
+    class MontyHallProblem(PMF):
       def __init__(self, *al, **kw):
         super(MontyHallProblem, self).__init__(*al, **kw)
       def likelihood(self, data, given_hypothesis):
@@ -202,12 +200,12 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_cookie_problem(self):
     '''
-    test_cookie_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
+    test_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
-    As in previous example, but using BayesPMF subclass with likelihood().
+    As in previous example, but using PMF subclass with likelihood().
     implemented.
     '''
-    class CookieProblem(BayesPMF):
+    class CookieProblem(PMF):
       def __init__(self, *al, **kw):
         super(CookieProblem, self).__init__(*al, **kw)
         self.hypotheses = dict(
@@ -224,7 +222,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_MnM_problem(self):
     '''
-    test_MnM_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
+    test_MnM_problem (irrealis_bayes.tests.FunctionalTestPMF)
     
     From Think Bayes:
 
@@ -238,7 +236,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
       gives me one M&M from each bag. One is yellow and one is green. What is
       the probability that the yellow one came from the 1994 bag?
     '''
-    class MnMProblem(BayesPMF):
+    class MnMProblem(PMF):
       def __init__(self, *al, **kw):
         super(MnMProblem, self).__init__(*al, **kw)
         mix94 = PMF(brown=30, yellow=20, red=20, green=10, orange=10, tan=10)
@@ -259,7 +257,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_cookie_problem_sans_replacement(self):
     '''
-    test_cookie_problem_sans_replacement (irrealis_bayes.tests.FunctionalTestBayesPMF)
+    test_cookie_problem_sans_replacement (irrealis_bayes.tests.FunctionalTestPMF)
 
     As before, two cookie bowls, the first containing 30 vanilla and ten
     chocolate cookies, the second twenty of each. You choose one of the bowls
@@ -288,7 +286,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
       P(bowl_1 | vanilla) = (0.6*0.744)/(0.6*0.744 + 0.4*0.487)
       ~= 0.696
     '''
-    class CookieProblem(BayesPMF):
+    class CookieProblem(PMF):
       '''
       We have two hypotheses:
       - A: bowl_a is bowl_1 (30 vanilla, 10 chocolate),
@@ -343,7 +341,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_dice_problem(self):
     '''
-    test_dice_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
+    test_dice_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     From Think Bayes:
     
@@ -367,7 +365,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     # given die (our hypothesis) is zero; in other words, P(data|hypothesis) =
     # 0 if hypothesis < data). Otherwise, the likelihood of seeing any side of
     # an N-sided die is 1/N.
-    class DiceProblem(BayesPMF):
+    class DiceProblem(PMF):
       def likelihood(self, data, given_hypothesis):
         return 0 if given_hypothesis < data else 1./given_hypothesis
 
@@ -390,7 +388,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
 
   def test_locomotive_problem(self):
     '''
-    test_locomotive_problem (irrealis_bayes.tests.FunctionalTestBayesPMF)
+    test_locomotive_problem (irrealis_bayes.tests.FunctionalTestPMF)
 
     From Think Bayes:
     
@@ -409,7 +407,7 @@ class FunctionalTestBayesPMF(unittest.TestCase):
       is the likelihood.
     '''
     # The likelihood function is identical to that of the dice problem.
-    class LocomotiveProblem(BayesPMF):
+    class LocomotiveProblem(PMF):
       def likelihood(self, data, given_hypothesis):
         return 0 if given_hypothesis < data else 1./given_hypothesis
 

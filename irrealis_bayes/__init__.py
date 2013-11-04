@@ -43,14 +43,6 @@ class PMF(dict):
       self[hypothesis] = hypothesis**(-alpha)
     self.normalize()
 
-
-class BayesPMF(PMF):
-  '''
-  dict as probability mass function with update of posterior probabilities.
-
-  The update() method calls the likelihood() method, which should be
-  implemented in subclasses.
-  '''
   def update(self, data):
     '''Updates posterior probability distribution given new data.'''
     for hypothesis in self:
@@ -63,3 +55,4 @@ class BayesPMF(PMF):
     Should be implemented in subclasses.
     '''
     raise NotImplementedError
+
