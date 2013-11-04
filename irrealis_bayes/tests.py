@@ -433,5 +433,42 @@ class FunctionalTestBayesPMF(unittest.TestCase):
     # expectation of the posterior distribution:
     self.assertTrue(333 < pmf.expectation() < 334)
 
+    # But if we use an upper bound of 500, we get a posterior expectation of
+    # 207, and if we use an upper bound of 200, we get a posterior expectation
+    # of 552, which is bad:
+    pmf.uniform_dist(xrange(1, 501))
+    pmf.update(60)
+    self.assertTrue(207 < pmf.expectation() < 208)
+    pmf.uniform_dist(xrange(1, 2001))
+    pmf.update(60)
+    self.assertTrue(552 < pmf.expectation() < 553)
+
+    # With more data, the expectations begin to converge:
+    pmf.uniform_dist(xrange(1, 501))
+    for n in (60, 30, 90): pmf.update(n)
+    self.assertTrue(151 < pmf.expectation() < 152)
+    pmf.uniform_dist(xrange(1, 1001))
+    for n in (60, 30, 90): pmf.update(n)
+    self.assertTrue(164 < pmf.expectation() < 165)
+    pmf.uniform_dist(xrange(1, 2001))
+    for n in (60, 30, 90): pmf.update(n)
+    self.assertTrue(171 < pmf.expectation() < 172)
+
+    # Alternatively, with better estimates of prior distributions, the
+    # expectations also converge. Downey observes a report by Axtell in Science
+    # (http://www.sciencemag.org/content/293/5536/1818.full.pdf) that the
+    # distribution of company sizes tends to follow a power law. So instead of
+    # using a uniform distribution, we can try a power-law distribution:
+    pmf.power_law_dist(xrange(1, 501))
+    for n in (60, 30, 90): pmf.update(n)
+    self.assertTrue(130 < pmf.expectation() < 131)
+    pmf.power_law_dist(xrange(1, 1001))
+    for n in (60, 30, 90): pmf.update(n)
+    self.assertTrue(133 < pmf.expectation() < 134)
+    pmf.power_law_dist(xrange(1, 2001))
+    for n in (60, 30, 90): pmf.update(n)
+    self.assertTrue(133 < pmf.expectation() < 134)
+    # The expectations are now in  close agreement.
+
 
 if __name__ == "__main__": unittest.main()
