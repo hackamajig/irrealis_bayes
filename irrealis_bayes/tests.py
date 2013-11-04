@@ -477,17 +477,17 @@ class TestCDF(unittest.TestCase):
     self.cdf = CDF(self.pmf.iteritems())
 
   def test_hypothesis(self):
-    self.assertEqual('a', self.cdf.hypothesis(0.0))
-    self.assertEqual('a', self.cdf.hypothesis(0.1))
-    self.assertEqual('a', self.cdf.hypothesis(0.2))
-    self.assertEqual('b', self.cdf.hypothesis(0.3))
-    self.assertEqual('b', self.cdf.hypothesis(0.4))
-    self.assertEqual('c', self.cdf.hypothesis(0.5))
-    self.assertEqual('c', self.cdf.hypothesis(0.6))
-    self.assertEqual('d', self.cdf.hypothesis(0.7))
-    self.assertEqual('d', self.cdf.hypothesis(0.8))
-    self.assertEqual('e', self.cdf.hypothesis(0.9))
-    self.assertEqual('e', self.cdf.hypothesis(1.0))
+    self.assertEqual('a', self.cdf.hypothesis(percentile = 0.0))
+    self.assertEqual('a', self.cdf.hypothesis(percentile = 0.1))
+    self.assertEqual('a', self.cdf.hypothesis(percentile = 0.2))
+    self.assertEqual('b', self.cdf.hypothesis(percentile = 0.3))
+    self.assertEqual('b', self.cdf.hypothesis(percentile = 0.4))
+    self.assertEqual('c', self.cdf.hypothesis(percentile = 0.5))
+    self.assertEqual('c', self.cdf.hypothesis(percentile = 0.6))
+    self.assertEqual('d', self.cdf.hypothesis(percentile = 0.7))
+    self.assertEqual('d', self.cdf.hypothesis(percentile = 0.8))
+    self.assertEqual('e', self.cdf.hypothesis(percentile = 0.9))
+    self.assertEqual('e', self.cdf.hypothesis(percentile = 1.0))
 
 
 if __name__ == "__main__": unittest.main()
