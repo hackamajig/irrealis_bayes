@@ -2,7 +2,7 @@ irrealis_bayes
 ==============
 
 I'm studying Allen B. Downey's "Think Bayes: Bayesian Statistics Made Simple",
-version 1.01. This repository is for tracking exploratory code I write as I
+version 1.0.1. This repository is for tracking exploratory code I write as I
 study.
 
 Demo usage

@@ -1,3 +1,8 @@
+'''
+Probability mass function (PMF) and cumulative distribution function (CDF)
+classes for use in study of Allen B. Downey's "Think Bayes: Bayesian Statistics
+Made Simple", version 1.0.1.
+'''
 import bisect
 
 
