@@ -10,6 +10,8 @@ Demo usage
 
 I've placed commented demos in the test cases defined in "irrealis_bayes/tests.py".
 
+I've also placed a Matplotlib plotting demo in the "examples/" subdirectory.
+
 Three-step modeling strategy
 ============================
 See test FunctionalTestPMF.test_dice_problem() in "irrealis_bayes/tests.py" for
