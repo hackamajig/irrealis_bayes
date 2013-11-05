@@ -91,13 +91,14 @@ class CDF(object):
     self.hypotheses, probabilities = zip(*items)
     self.cumulative_distribution = list(running_sum(probabilities))
 
-  def _floor_index(self, index, probability):
+  def floor_index(self, probability):
+    '''Get the index of the last hypothesis at or below the given percentile (specified as probability).'''
+    index = bisect.bisect(self.cumulative_distribution, probability)
     return index-1 if probability==self.cumulative_distribution[index-1] else index
 
   def percentile(self, probability):
-    '''Return hypothesis corresponding to percentile (specified as a probability).'''
-    index = bisect.bisect(self.cumulative_distribution, probability)
-    return self.hypotheses[self._floor_index(index, probability)]
+    '''Return hypothesis corresponding to percentile (specified as probability).'''
+    return self.hypotheses[self.floor_index(probability)]
 
   def percentiles(self, *probabilities):
     '''
