@@ -71,8 +71,11 @@ def first_element(l):
   '''Return the first element of l.'''
   return l[0]
 
-def sort_items(items, cmp, key, reverse):
-  '''Sort list of items in-place. List usually consists of dict key-value pairs.'''
+def sort_items(items, cmp=None, key=None, reverse=False):
+  '''
+  Sort item list in-place.
+  By default, expects list of dict key-value pairs, and sorts pairs on value.
+  '''
   items.sort(cmp=cmp, key=key if key else first_element, reverse=reverse)
 
 def running_sum(l):
@@ -89,7 +92,7 @@ class CDF(object):
     items = dict_items_from_data(data)
     sort_items(items, cmp, key, reverse)
     self.hypotheses, probabilities = zip(*items)
-    self.cumulative_distribution = list(running_sum(probabilities))
+    self.cumulative_distribution = tuple(running_sum(probabilities))
 
   def floor_index(self, probability):
     '''Get the index of the last hypothesis at or below the given percentile (specified as probability).'''
