@@ -63,13 +63,13 @@ class PMF(dict):
     raise NotImplementedError
 
 
-def first_element(l):
-  '''Return the first element of l.'''
-  return l[0]
-
 def dict_items_from_data(data):
   '''Convert data into a dict, then return its elements as key-value pairs.'''
   return dict(data if data else []).items()
+
+def first_element(l):
+  '''Return the first element of l.'''
+  return l[0]
 
 def sort_items(items, cmp, key, reverse):
   '''Sort list of items in-place. List usually consists of dict key-value pairs.'''
