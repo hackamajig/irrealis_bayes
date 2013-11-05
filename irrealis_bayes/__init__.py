@@ -59,24 +59,35 @@ class PMF(dict):
     raise NotImplementedError
 
 
+def first_element(l):
+  return l[0]
+
+def dict_items_from_data(data):
+  return dict(data if data else []).items()
+
+def sort_items(items, cmp, key, reverse):
+  items.sort(cmp=cmp, key=key if key else first_element, reverse=reverse)
+
+def running_sum(l):
+  total = 0
+  for x in l:
+    total += x
+    yield total
+
+
 class CDF(object):
-  def __init__(self, items=None, cmp=None, key=None, reverse=False):
-    if not items:
-      items = []
-    if not key:
-      key = lambda x: x[0]
-    items = list(items)
-    items.sort(cmp, key, reverse)
+  def __init__(self, data=None, cmp=None, key=None, reverse=False):
+    items = dict_items_from_data(data)
+    sort_items(items, cmp, key, reverse)
     self.hypotheses, probabilities = zip(*items)
-    total = 0
-    self.cumulative_distribution = []
-    for probability in probabilities:
-      total += probability
-      self.cumulative_distribution.append(total)
+    self.cumulative_distribution = list(running_sum(probabilities))
+
+  def _floor_index(self, index, probability):
+    return index-1 if probability==self.cumulative_distribution[index-1] else index
 
   def percentile(self, probability):
     index = bisect.bisect(self.cumulative_distribution, probability)
-    return self.hypotheses[(index-1) if probability==self.cumulative_distribution[index-1] else index]
+    return self.hypotheses[self._floor_index(index, probability)]
 
   def percentiles(self, *probabilities):
     return tuple(self.percentile(probability) for probability in probabilities)

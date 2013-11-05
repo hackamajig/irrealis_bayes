@@ -492,8 +492,8 @@ class FunctionalTestPMF(unittest.TestCase):
     self.assertTrue(133 < pmf.expectation() < 134)
     # The expectations are now in  close agreement.
 
-    # We can determine a credible intervale for which there is a 90% chance
-    # that the answer (how many locomotives the railroad has) lies within the
+    # We can determine a credible interval for which there is a 90% chance that
+    # the answer (how many locomotives the railroad has) lies within the
     # interval:
     cdf = CDF(pmf.iteritems())
     self.assertEqual((91, 243), cdf.percentiles(0.05, 0.95))
