@@ -64,15 +64,19 @@ class PMF(dict):
 
 
 def first_element(l):
+  '''Return the first element of l.'''
   return l[0]
 
 def dict_items_from_data(data):
+  '''Convert data into a dict, then return its elements as key-value pairs.'''
   return dict(data if data else []).items()
 
 def sort_items(items, cmp, key, reverse):
+  '''Sort list of items in-place. List usually consists of dict key-value pairs.'''
   items.sort(cmp=cmp, key=key if key else first_element, reverse=reverse)
 
 def running_sum(l):
+  '''Generator function to return an iterable running sum of l (which can itself be any iterable).'''
   total = 0
   for x in l:
     total += x
