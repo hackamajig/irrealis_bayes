@@ -7,16 +7,20 @@ class PMF(dict):
     super(PMF, self).__init__(*al, **kw)
 
   def copy(self):
+    '''Return a shallow copy of this distribution.'''
     return self.__class__(self)
 
   def total(self):
+    '''Sum elements of this distribution.'''
     return sum(self.itervalues())
 
   def normalizer(self):
+    '''Return normalizing constant to scale distribution so it sums to one.'''
     total = self.total()
     return 1./total if total else float('inf')
 
   def expectation(self):
+    '''Compute the expectation, aka mean, of this distribution.'''
     try:
       return sum(hypo*prob for hypo, prob in self.iteritems())
     except TypeError as e:
