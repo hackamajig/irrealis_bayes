@@ -80,6 +80,7 @@ def running_sum(l):
 
 
 class CDF(object):
+  '''Discrete cumulative distribution function.'''
   def __init__(self, data=None, cmp=None, key=None, reverse=False):
     items = dict_items_from_data(data)
     sort_items(items, cmp, key, reverse)
@@ -90,8 +91,16 @@ class CDF(object):
     return index-1 if probability==self.cumulative_distribution[index-1] else index
 
   def percentile(self, probability):
+    '''Return hypothesis corresponding to percentile (specified as a probability).'''
     index = bisect.bisect(self.cumulative_distribution, probability)
     return self.hypotheses[self._floor_index(index, probability)]
 
   def percentiles(self, *probabilities):
+    '''
+    Return list of hypothesis corresponding list of percentiles (specified as probabilities).
+    Use this to obtain a credible interval; for example, to get the 90%
+    interval between the fifth and 95th percentiles, write:
+
+    credible_interval = cdf.percentiles(0.05, 0.95)
+    '''
     return tuple(self.percentile(probability) for probability in probabilities)
