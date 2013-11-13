@@ -498,5 +498,38 @@ class FunctionalTestPMF(unittest.TestCase):
     cdf = CDF(pmf)
     self.assertEqual((91, 243), cdf.percentiles(0.05, 0.95))
 
+  def test_german_tank_problem(self):
+    '''
+    test_german_tank_problem (irrealis_bayes.tests.FunctionalTestPMF)
+
+    From Think Bayes:
+
+      During World War II, the Economic Warfare Division of the American
+      Embassy in London used statistical analysis to estimate German production
+      of tanks and other equipment.
+
+      The Western Allies had captured log books, inventories, and repair records
+      that included chassis and engine serial numbers for individual tanks.
+
+      Analysis of these records indicated that serial numbers were allocated by
+      manufacturer and tank type in blocks of 100 numbers, that numbers in each
+      block were used sequentially, and that not all numbers in each block were
+      used. So the problem of estimating German tank production could be
+      reduced, within each block of 100 numbers, to a form of the locomotive
+      problem.
+
+      Based on this insight, American and British analysts produced estimates
+      substantially lower than estimates from other forms of intelligence. And
+      after the war, records indicated that they were substantially more
+      accurate.
+
+      They performed similar analyses for tires, trucks, rockets, and other
+      equipment, yielding accurate and actionable economic intelligence.
+
+      The German tank problem is historically intersting; it is also a nice
+      example of real-world application of statistical estimation.
+    '''
+    pass
+
 
 if __name__ == "__main__": unittest.main()
