@@ -602,10 +602,10 @@ class FunctionalTestPMF(unittest.TestCase):
     # hypothesis that zero serial numbers were used in a given block.
     class LocomotiveProblem(PMF):
       def likelihood(self, data, given_hypothesis):
-        if (given_hypothesis < data) or (given_hypothesis == 0):
-          return 0
+        if given_hypothesis == 0:
+          return 1 if data == 0 else 0
         else:
-          return 1./given_hypothesis
+          return 0 if given_hypothesis < data else 1./given_hypothesis
 
     pmfs = [LocomotiveProblem() for n in range(10)]
     for pmf in pmfs:
