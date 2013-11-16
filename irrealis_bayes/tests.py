@@ -664,11 +664,11 @@ class FunctionalTestPMF(unittest.TestCase):
       pmf.power_law_dist(range(1,100))
       # The following heavily biases prior distributions toward zero. Have to
       # renormalize after this hack.
-      pmf[0] = 100.; pmf.normalize()
+      #pmf[0] = 100.; pmf.normalize()
 
     # Now let's make a bunch of observations, and update our pmfs accordingly.
     random.seed(0)
-    for n in range(50):
+    for n in range(20):
       observation = sampling_dist.random()
       pmf_number, pmf_partial_serial_number = divmod(observation, 100)
       pmf = pmfs[pmf_number]
@@ -685,6 +685,15 @@ class FunctionalTestPMF(unittest.TestCase):
     endpoint_arrays = zip(*credible_intervals)
     summed_credible_interval = [sum(array) for array in endpoint_arrays]
     print "90% summed_credible_interval:", summed_credible_interval
+
+    # Third thingwe can try is distribution of sums.
+    sum_pmf = sum_independent_pmfs(pmfs)
+    print "expectation of sum:", sum_pmf.expectation()
+    sum_cdf = CDF(sum_pmf)
+    credible_interval_of_sum = sum_cdf.percentiles(0.05, 0.95)
+    print "90% credible interval of sum:", credible_interval_of_sum
+    credible_interval_of_sum = sum_cdf.percentiles(0.025, 0.975)
+    print "95% credible interval of sum:", credible_interval_of_sum
 
 
 if __name__ == "__main__": unittest.main()
