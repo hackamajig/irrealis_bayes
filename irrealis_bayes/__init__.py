@@ -6,16 +6,16 @@ Made Simple", version 1.0.1.
 import bisect, random
 
 
-def filter_possible_hypos(pmf):
-  return PMF((hypo, prob) for hypo, prob in pmf.iteritems() if 0 < prob)
+def filter_possible_events(pmf):
+  return PMF((event, prob) for event, prob in pmf.iteritems() if 0 < prob)
 
 def add_two_independent_pmfs(left_pmf, right_pmf):
-  left_pmf, right_pmf = [filter_possible_hypos(pmf) for pmf in (left_pmf, right_pmf)]
+  left_pmf, right_pmf = [filter_possible_events(pmf) for pmf in (left_pmf, right_pmf)]
   result = PMF()
-  for left_hypo, left_prob in left_pmf.iteritems():
-    for right_hypo, right_prob in right_pmf.iteritems():
-      sum_hypo = left_hypo + right_hypo
-      result[sum_hypo] = result.get(sum_hypo, 0.) + left_prob*right_prob
+  for left_event, left_prob in left_pmf.iteritems():
+    for right_event, right_prob in right_pmf.iteritems():
+      sum_event = left_event + right_event
+      result[sum_event] = result.get(sum_event, 0.) + left_prob*right_prob
   return result
 
 def sum_independent_pmfs(pmfs):
@@ -46,9 +46,9 @@ class PMF(dict):
   def expectation(self):
     'Compute the expectation, aka mean, of this distribution.'
     try:
-      return sum(hypo*prob for hypo, prob in self.iteritems())
+      return sum(event*prob for event, prob in self.iteritems())
     except TypeError as e:
-      raise TypeError("Can't compute expectation of non-numeric hypotheses ({})".format(e))
+      raise TypeError("Can't compute expectation of non-numeric events ({})".format(e))
 
   def scale(self, factor):
     'Scale all measures by a common factor.'
@@ -61,8 +61,8 @@ class PMF(dict):
 
   def random(self):
     '''
-    Returns random hypothesis.
-    Probability of returning this hypothesis is determined by this distribution.
+    Returns random event.
+    Probability of returning this event is determined by this distribution.
     '''
     # It would be nice if we didn't have to compute total every time this
     # function is called; but otherwise we'd have to assume this distribution
@@ -72,34 +72,34 @@ class PMF(dict):
     # Might be worth doing; but increases code complexity.
     target = random.random()*self.total()
     total = 0
-    for hypo, prob in self.iteritems():
+    for event, prob in self.iteritems():
       total += prob
       if total >= target:
-        return hypo
+        return event
 
-  def uniform_dist(self, hypotheses):
-    'Assign equal probabilities to each of a list of hypotheses.'
+  def uniform_dist(self, events):
+    'Assign equal probabilities to each of a list of events.'
     self.clear()
-    for hypothesis in hypotheses:
-      self[hypothesis] = 1
+    for event in events:
+      self[event] = 1
     self.normalize()
 
-  def power_law_dist(self, hypotheses, alpha=1.):
-    'Assign power law distribution to each of a list of quantitative hypotheses.'
+  def power_law_dist(self, events, alpha=1.):
+    'Assign power law distribution to each of a list of quantitative events.'
     self.clear()
-    for hypothesis in hypotheses:
-      self[hypothesis] = hypothesis**(-alpha)
+    for event in events:
+      self[event] = event**(-alpha)
     self.normalize()
 
   def update(self, data):
     'Updates posterior probability distribution given new data.'
-    for hypothesis in self:
-      self[hypothesis] *= self.likelihood(data, given = hypothesis)
+    for event in self:
+      self[event] *= self.likelihood(data, given = event)
     self.normalize()
 
   def likelihood(self, data, given):
     '''
-    Returns likelihood of observed data given a hypothesis. Unimplemented.
+    Returns likelihood of observed data given a event. Unimplemented.
     Should be implemented in subclasses.
     '''
     raise NotImplementedError
@@ -133,21 +133,21 @@ class CDF(object):
   def __init__(self, data=None, cmp=None, key=None, reverse=False):
     items = dict_items_from_data(data)
     sort_items(items, cmp, key, reverse)
-    self.hypotheses, probabilities = zip(*items)
+    self.events, probabilities = zip(*items)
     self.cumulative_distribution = tuple(running_sum(probabilities))
 
   def floor_index(self, probability):
-    'Get index of last hypothesis at or below given percentile (specified as probability).'
+    'Get index of last event at or below given percentile (specified as probability).'
     index = bisect.bisect(self.cumulative_distribution, probability)
     return index-1 if probability==self.cumulative_distribution[index-1] else index
 
   def percentile(self, probability):
-    'Return hypothesis corresponding to percentile (specified as probability).'
-    return self.hypotheses[self.floor_index(probability)]
+    'Return event corresponding to percentile (specified as probability).'
+    return self.events[self.floor_index(probability)]
 
   def percentiles(self, *probabilities):
     '''
-    Return list of hypothesis corresponding list of percentiles (specified as probabilities).
+    Return list of event corresponding list of percentiles (specified as probabilities).
     Use this to obtain a credible interval; for example, to get the 90%
     interval between the fifth and 95th percentiles, write:
 

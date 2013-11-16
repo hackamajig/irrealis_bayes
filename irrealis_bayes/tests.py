@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from irrealis_bayes import CDF, PMF, add_two_independent_pmfs, filter_possible_hypos, sum_independent_pmfs
+from irrealis_bayes import CDF, PMF, add_two_independent_pmfs, filter_possible_events, sum_independent_pmfs
 
 import random, unittest
 
@@ -56,7 +56,7 @@ class UnitTestPMF(unittest.TestCase):
     self.assertTrue(0.166 < simulation_pmf[3] < 0.197)
 
   def test_uniform_dist(self):
-    # Verify that pmf is cleared when new hypotheses are applied.
+    # Verify that pmf is cleared when new events are applied.
     self.pmf.uniform_dist('ABCDEF')
     self.pmf.uniform_dist('abcde')
     self.assertEqual(5, len(self.pmf))
@@ -66,7 +66,7 @@ class UnitTestPMF(unittest.TestCase):
     for value in self.pmf.itervalues(): self.assertTrue(0.199 < value < 0.201)
 
   def test_power_law_dist(self):
-    # Verify that pmf is cleared when new hypotheses are applied.
+    # Verify that pmf is cleared when new events are applied.
     self.pmf.uniform_dist('ABCDEF')
     self.pmf.power_law_dist(xrange(1, 4))
     self.assertEqual(3, len(self.pmf))
@@ -77,7 +77,7 @@ class UnitTestPMF(unittest.TestCase):
     self.assertTrue(0.272 < self.pmf[2] < 0.273)
     self.assertTrue(0.181 < self.pmf[3] < 0.182)
 
-  def test_expectation_raises_on_nonnumeric_hypothesis(self):
+  def test_expectation_raises_on_nonnumeric_event(self):
     with self.assertRaises(TypeError): self.pmf.expectation()
 
   def test_ints(self):
@@ -107,12 +107,12 @@ class UnitTestPMF(unittest.TestCase):
       self.assertTrue(0.199 < pmf2[key] < 0.201)
 
 
-class TestFilterPossibleHypos(unittest.TestCase):
-  def test_filter_possible_hypos(self):
+class TestFilterPossibleEvents(unittest.TestCase):
+  def test_filter_possible_events(self):
     pmf = PMF()
     pmf.uniform_dist('abcdef')
     pmf['f'] = 0
-    filtered_pmf = filter_possible_hypos(pmf)
+    filtered_pmf = filter_possible_events(pmf)
     for x in 'abcde':
       self.assertTrue(x in filtered_pmf)
     self.assertTrue(x in filtered_pmf)
