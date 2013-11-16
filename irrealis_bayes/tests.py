@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from irrealis_bayes import CDF, PMF, filter_possible_hypos
+from irrealis_bayes import CDF, PMF, add_two_independent_pmfs, filter_possible_hypos
 
 import random, unittest
 
@@ -116,6 +116,17 @@ class TestFilterPossibleHypos(unittest.TestCase):
     for x in 'abcde':
       self.assertTrue(x in filtered_pmf)
     self.assertTrue(x in filtered_pmf)
+
+
+class TestAddTwoIndependentPmfs(unittest.TestCase):
+  def test_add_two_independent_pmfs(self):
+    left_pmf, right_pmf = PMF(), PMF()
+    left_pmf.uniform_dist((0,1))
+    right_pmf.uniform_dist((0,1))
+    sum_pmf = add_two_independent_pmfs(left_pmf, right_pmf)
+    self.assertTrue(0.249 < sum_pmf[0] < 0.251)
+    self.assertTrue(0.499 < sum_pmf[1] < 0.501)
+    self.assertTrue(0.249 < sum_pmf[2] < 0.251)
 
 
 class TestCDF(unittest.TestCase):

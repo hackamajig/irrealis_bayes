@@ -9,6 +9,16 @@ import bisect, random
 def filter_possible_hypos(pmf):
   return PMF((hypo, prob) for hypo, prob in pmf.iteritems() if 0 < prob)
 
+def add_two_independent_pmfs(left_pmf, right_pmf):
+  left_pmf, right_pmf = [filter_possible_hypos(pmf) for pmf in (left_pmf, right_pmf)]
+  result = PMF()
+  for left_hypo, left_prob in left_pmf.iteritems():
+    for right_hypo, right_prob in right_pmf.iteritems():
+      sum_hypo = left_hypo + right_hypo
+      prob = result.get(sum_hypo, 0.)
+      result[sum_hypo] = prob + left_prob*right_prob
+  return result
+
 class PMF(dict):
   'Dictionary as probability mass function.'
   def __init__(self, *al, **kw):
