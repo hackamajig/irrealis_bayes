@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from irrealis_bayes import CDF, PMF
+from irrealis_bayes import CDF, PMF, filter_possible_hypos
 
 import random, unittest
 
@@ -105,6 +105,17 @@ class UnitTestPMF(unittest.TestCase):
     for key in self.pmf:
       self.assertEqual(1, self.pmf[key])
       self.assertTrue(0.199 < pmf2[key] < 0.201)
+
+
+class TestFilterPossibleHypos(unittest.TestCase):
+  def test_filter_possible_hypos(self):
+    pmf = PMF()
+    pmf.uniform_dist('abcdef')
+    pmf['f'] = 0
+    filtered_pmf = filter_possible_hypos(pmf)
+    for x in 'abcde':
+      self.assertTrue(x in filtered_pmf)
+    self.assertTrue(x in filtered_pmf)
 
 
 class TestCDF(unittest.TestCase):

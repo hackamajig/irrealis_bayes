@@ -6,6 +6,9 @@ Made Simple", version 1.0.1.
 import bisect, random
 
 
+def filter_possible_hypos(pmf):
+  return PMF((hypo, prob) for hypo, prob in pmf.iteritems() if 0 < prob)
+
 class PMF(dict):
   'Dictionary as probability mass function.'
   def __init__(self, *al, **kw):
