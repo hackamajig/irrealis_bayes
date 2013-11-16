@@ -293,9 +293,9 @@ class FunctionalTestPMF(unittest.TestCase):
     class MontyHallProblem(PMF):
       def __init__(self, *al, **kw):
         super(MontyHallProblem, self).__init__(*al, **kw)
-      def likelihood(self, data, given_hypothesis):
-        if given_hypothesis == data: return 0
-        elif given_hypothesis == 'a': return 0.5
+      def likelihood(self, data, given):
+        if given == data: return 0
+        elif given == 'a': return 0.5
         else: return 1
         
     pmf = MontyHallProblem()
@@ -320,8 +320,8 @@ class FunctionalTestPMF(unittest.TestCase):
           bowl_2 = PMF(vanilla = 20, chocolate = 20),
         )
         self.uniform_dist(self.hypotheses)
-      def likelihood(self, data, given_hypothesis):
-        return self.hypotheses[given_hypothesis][data]
+      def likelihood(self, data, given):
+        return self.hypotheses[given][data]
         
     pmf = CookieProblem()
     pmf.update('vanilla')
@@ -353,9 +353,9 @@ class FunctionalTestPMF(unittest.TestCase):
           B = dict(bag_1 = mix96, bag_2 = mix94),
         )
         self.uniform_dist(self.hypotheses)
-      def likelihood(self, data, given_hypothesis):
+      def likelihood(self, data, given):
         bag, color = data
-        return self.hypotheses[given_hypothesis][bag][color]
+        return self.hypotheses[given][bag][color]
         
     pmf = MnMProblem()
     pmf.update(('bag_1', 'yellow'))
@@ -428,15 +428,15 @@ class FunctionalTestPMF(unittest.TestCase):
           B = dict(bowl_a = bowl_2.copy(), bowl_b = bowl_1.copy()),
         )
         self.uniform_dist(self.hypotheses)
-      def likelihood(self, data, given_hypothesis):
+      def likelihood(self, data, given):
         bowl, cookie = data
         # First we obtain a copy of the distribution for given hypothesis.
-        distribution = self.hypotheses[given_hypothesis][bowl].copy()
+        distribution = self.hypotheses[given][bowl].copy()
         # The we normalize the copy so we can compute the likelihood.
         distribution.normalize()
         likelihood = distribution[cookie]
         # Then we update the state of the hypothesis.
-        self.hypotheses[given_hypothesis][bowl][cookie] -= 1
+        self.hypotheses[given][bowl][cookie] -= 1
         # Now we can return the computed likelihood.
         return likelihood
 
@@ -473,8 +473,8 @@ class FunctionalTestPMF(unittest.TestCase):
     # 0 if hypothesis < data). Otherwise, the likelihood of seeing any side of
     # an N-sided die is 1/N.
     class DiceProblem(PMF):
-      def likelihood(self, data, given_hypothesis):
-        return 0 if given_hypothesis < data else 1./given_hypothesis
+      def likelihood(self, data, given):
+        return 0 if given < data else 1./given
 
     pmf = DiceProblem()
     pmf.uniform_dist([4,6,8,12,20])
@@ -515,8 +515,8 @@ class FunctionalTestPMF(unittest.TestCase):
     '''
     # The likelihood function is identical to that of the dice problem.
     class LocomotiveProblem(PMF):
-      def likelihood(self, data, given_hypothesis):
-        return 0 if given_hypothesis < data else 1./given_hypothesis
+      def likelihood(self, data, given):
+        return 0 if given < data else 1./given
 
     # We don't have much basis to choose a prior, but we can start with
     # something simple and then consider alternatives. Let's assume that N is
@@ -656,8 +656,8 @@ class FunctionalTestPMF(unittest.TestCase):
     # problem. We'll use a modified power distribution that includes the
     # hypothesis that zero serial numbers were used in a given block.
     class LocomotiveProblem(PMF):
-      def likelihood(self, data, given_hypothesis):
-        return 1./given_hypothesis if 0 <= data < given_hypothesis else 0
+      def likelihood(self, data, given):
+        return 1./given if 0 <= data < given else 0
 
     pmfs = [LocomotiveProblem() for n in range(10)]
     for pmf in pmfs:
@@ -674,6 +674,7 @@ class FunctionalTestPMF(unittest.TestCase):
       pmf = pmfs[pmf_number]
       pmf.update(pmf_partial_serial_number)
 
+    print
     # First thing we can try is summing expectations.
     print "sum of expectations:", sum(pmf.expectation() for pmf in pmfs)
 

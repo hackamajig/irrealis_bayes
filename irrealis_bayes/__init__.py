@@ -21,6 +21,7 @@ def add_two_independent_pmfs(left_pmf, right_pmf):
 def sum_independent_pmfs(pmfs):
   return reduce(lambda x, y: x+y, pmfs)
 
+
 class PMF(dict):
   'Dictionary as probability mass function.'
   def __init__(self, *al, **kw):
@@ -93,10 +94,10 @@ class PMF(dict):
   def update(self, data):
     'Updates posterior probability distribution given new data.'
     for hypothesis in self:
-      self[hypothesis] *= self.likelihood(data, given_hypothesis = hypothesis)
+      self[hypothesis] *= self.likelihood(data, given = hypothesis)
     self.normalize()
 
-  def likelihood(self, data, given_hypothesis):
+  def likelihood(self, data, given):
     '''
     Returns likelihood of observed data given a hypothesis. Unimplemented.
     Should be implemented in subclasses.

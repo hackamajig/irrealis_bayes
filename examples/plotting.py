@@ -3,8 +3,8 @@ import irrealis_bayes as ib
 import matplotlib.pyplot as plt
 
 class LocomotiveProblem(ib.PMF):
-  def likelihood(self, data, given_hypothesis):
-    return 0 if given_hypothesis < data else 1./given_hypothesis
+  def likelihood(self, data, given):
+    return 0 if given < data else 1./given
 
 def run_demo():
   probability_mass_function = LocomotiveProblem()
