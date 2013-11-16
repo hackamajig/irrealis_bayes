@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from irrealis_bayes import CDF, PMF, add_two_independent_pmfs, filter_possible_hypos
+from irrealis_bayes import CDF, PMF, add_two_independent_pmfs, filter_possible_hypos, sum_independent_pmfs
 
 import random, unittest
 
@@ -118,7 +118,7 @@ class TestFilterPossibleHypos(unittest.TestCase):
     self.assertTrue(x in filtered_pmf)
 
 
-class TestAddTwoIndependentPmfs(unittest.TestCase):
+class TestAddPmfs(unittest.TestCase):
   def test_add_two_independent_pmfs(self):
     left_pmf, right_pmf = PMF(), PMF()
     left_pmf.uniform_dist((0,1))
@@ -127,6 +127,39 @@ class TestAddTwoIndependentPmfs(unittest.TestCase):
     self.assertTrue(0.249 < sum_pmf[0] < 0.251)
     self.assertTrue(0.499 < sum_pmf[1] < 0.501)
     self.assertTrue(0.249 < sum_pmf[2] < 0.251)
+
+  def test_add_pmfs(self):
+    left_pmf, right_pmf = PMF(), PMF()
+    left_pmf.uniform_dist((0,1))
+    right_pmf.uniform_dist((0,1))
+    sum_pmf = left_pmf + right_pmf
+    self.assertTrue(0.249 < sum_pmf[0] < 0.251)
+    self.assertTrue(0.499 < sum_pmf[1] < 0.501)
+    self.assertTrue(0.249 < sum_pmf[2] < 0.251)
+
+  def test_iadd_pmfs(self):
+    left_pmf, right_pmf = PMF(), PMF()
+    left_pmf.uniform_dist((0,1))
+    right_pmf.uniform_dist((0,1))
+    left_pmf += right_pmf
+    self.assertTrue(0.249 < left_pmf[0] < 0.251)
+    self.assertTrue(0.499 < left_pmf[1] < 0.501)
+    self.assertTrue(0.249 < left_pmf[2] < 0.251)
+
+  def test_sum_two_pmfs(self):
+    pmfs = [PMF.fromkeys((0,1), 0.5) for n in range(2)]
+    sum_pmf = sum_independent_pmfs(pmfs)
+    self.assertTrue(0.249 < sum_pmf[0] < 0.251)
+    self.assertTrue(0.499 < sum_pmf[1] < 0.501)
+    self.assertTrue(0.249 < sum_pmf[2] < 0.251)
+
+  def test_sum_three_pmfs(self):
+    pmfs = [PMF.fromkeys((0,1), 0.5) for n in range(3)]
+    sum_pmf = sum_independent_pmfs(pmfs)
+    self.assertTrue(0.124 < sum_pmf[0] < 0.126)
+    self.assertTrue(0.374 < sum_pmf[1] < 0.376)
+    self.assertTrue(0.374 < sum_pmf[2] < 0.376)
+    self.assertTrue(0.124 < sum_pmf[3] < 0.126)
 
 
 class TestCDF(unittest.TestCase):

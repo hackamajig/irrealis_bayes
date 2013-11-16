@@ -15,14 +15,19 @@ def add_two_independent_pmfs(left_pmf, right_pmf):
   for left_hypo, left_prob in left_pmf.iteritems():
     for right_hypo, right_prob in right_pmf.iteritems():
       sum_hypo = left_hypo + right_hypo
-      prob = result.get(sum_hypo, 0.)
-      result[sum_hypo] = prob + left_prob*right_prob
+      result[sum_hypo] = result.get(sum_hypo, 0.) + left_prob*right_prob
   return result
+
+def sum_independent_pmfs(pmfs):
+  return reduce(lambda x, y: x+y, pmfs)
 
 class PMF(dict):
   'Dictionary as probability mass function.'
   def __init__(self, *al, **kw):
     super(PMF, self).__init__(*al, **kw)
+
+  def __add__(self, other):
+    return add_two_independent_pmfs(self, other)
 
   def copy(self):
     'Return a shallow copy of this distribution.'
