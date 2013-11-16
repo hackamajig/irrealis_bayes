@@ -579,7 +579,51 @@ class FunctionalTestPMF(unittest.TestCase):
     numbers used, and then try to infer the total number of tanks on the basis
     of serial numbers observed.
     '''
-    pass
+    # First we'll create a distribution for sampling. This distribution will be
+    # uniform over the serial numbers used.
+    serial_number_blocks = (
+      (0,9),
+      (100,129),
+      (200,242),
+      (300,356),
+      (400,465),
+      (500,583),
+      (600,670),
+      (700,778),
+    )
+    # Make a list of all actual serial numbers.
+    serial_numbers = sum((range(start, end+1) for (start, end) in serial_number_blocks), [])
+    sampling_dist = PMF()
+    sampling_dist.uniform_dist(serial_numbers)
+
+    # Pretending we don't know much, we'll assume a set of ten blocks of 100
+    # serial numbers per block, treating each block as in the locomotive
+    # problem. We'll use a modified power distribution that includes the
+    # hypothesis that zero serial numbers were used in a given block.
+    class LocomotiveProblem(PMF):
+      def likelihood(self, data, given_hypothesis):
+        if (given_hypothesis < data) or (given_hypothesis == 0):
+          return 0
+        else:
+          return 1./given_hypothesis
+
+    pmfs = [LocomotiveProblem() for n in range(10)]
+    for pmf in pmfs:
+      pmf.power_law_dist(range(1,100))
+      # The following heavily biases prior distributions toward zero. Have to
+      # renormalize after this hack.
+      pmf[0] = 100.; pmf.normalize()
+
+    # Now let's make a bunch of observations, and update our pmfs accordingly.
+    random.seed(0)
+    for n in range(50):
+      observation = sampling_dist.random()
+      pmf_number, pmf_partial_serial_number = divmod(observation, 100)
+      pmf = pmfs[pmf_number]
+      pmf.update(pmf_partial_serial_number)
+
+    # First thing we can try is sum of expectations.
+    print "sum of expectations:", sum(pmf.expectation() for pmf in pmfs)
 
 
 if __name__ == "__main__": unittest.main()
