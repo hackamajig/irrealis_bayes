@@ -557,6 +557,27 @@ class FunctionalTestPMF(unittest.TestCase):
 
       The German tank problem is historically intersting; it is also a nice
       example of real-world application of statistical estimation.
+
+    Let's try a simplified version of the this problem. Let's assume five
+    producers A, B, C, D produced 10, 30, 100, 300 tanks each in a given time
+    period, and that serial number blocks were allocated and used as follows:
+    
+      Producer    allocated     Used       Subtotal
+      A           0-99          0-9        10
+
+      B           100-199       100-129    30
+
+      C           200-299       200-242    43
+      C           300-399       300-356    57
+
+      D           400-499       400-465    66
+      D           500-599       500-583    84
+      D           600-699       600-670    71
+      D           700-799       700-778    79
+
+    Now let's pretend we don't know how many tanks were made, nor which serial
+    numbers used, and then try to infer the total number of tanks on the basis
+    of serial numbers observed.
     '''
     pass
 
