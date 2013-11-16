@@ -3,7 +3,7 @@ Probability mass function (PMF) and cumulative distribution function (CDF)
 classes for use in study of Allen B. Downey's "Think Bayes: Bayesian Statistics
 Made Simple", version 1.0.1.
 '''
-import bisect
+import bisect, random
 
 
 class PMF(dict):
@@ -39,6 +39,24 @@ class PMF(dict):
   def normalize(self):
     'Normalize all measures so they sum to one, making this a probability distribution.'
     self.scale(self.normalizer())
+
+  def random(self):
+    '''
+    Returns random hypothesis.
+    Probability of returning this hypothesis is determined by this distribution.
+    '''
+    # It would be nice if we didn't have to compute total every time this
+    # function is called; but otherwise we'd have to assume this distribution
+    # has been normalized(), which is not always true.
+    #
+    # I've considered keeping a 'total' attribute which is always up-to-date.
+    # Might be worth doing; but increases code complexity.
+    target = random.random()*self.total()
+    total = 0
+    for hypo, prob in self.iteritems():
+      total += prob
+      if total >= target:
+        return hypo
 
   def uniform_dist(self, hypotheses):
     'Assign equal probabilities to each of a list of hypotheses.'
