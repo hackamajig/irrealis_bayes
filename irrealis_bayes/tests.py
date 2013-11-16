@@ -696,5 +696,53 @@ class FunctionalTestPMF(unittest.TestCase):
     credible_interval_of_sum = sum_cdf.percentiles(0.025, 0.975)
     print "95% credible interval of sum:", credible_interval_of_sum
 
+  def test_euro_problem(self):
+    '''
+    test_euro_problem (irrealis_bayes.tests.FunctionalTestPMF)
+
+    From Think Bayes:
+
+      In Information Theory, Inference, and Learning Algorithms, David MacKay
+      poses this problem:
+
+        A statistical statement appeared in “The Guardian" on Friday January 4,
+        2002:
+
+          When spun on edge 250 times, a Belgian one-euro coin came up heads
+          140 times and tails 110. ‘It looks very suspicious to me,’ said Barry
+          Blight, a statistics lecturer at the London School of Economics. ‘If
+          the coin were unbiased, the chance of getting a result as extreme as
+          that would be less than 7%.’
+
+        But do these data give evidence that the coin is biased rather than
+        fair?
+
+      To answer that question, we’ll proceed in two steps. The first is to
+      esti- mate the probability that the coin lands face up. The second is to
+      evaluate whether the data support the hypothesis that the coin is biased.
+      
+      Any given coin has some probability, x, of landing heads up when spun on
+      edge. It seems reasonable to believe that the value of x depends on some
+      physical characteristics of the coin, primarily the distribution of
+      weight.
+      
+      If a coin is perfectly balanced, we expect x to be close to 50%, but for
+      a lop- sided coin, x might be substantially different. We can use Bayes’s
+      theorem and the observed data to estimate x.
+      
+      Let’s define 101 hypotheses, where Hx is the hypothesis that the
+      probability of heads is x%, for values from 0 to 100. I’ll start with a
+      uniform prior where the probability of Hx is the same for all x. We’ll
+      come back later to consider other priors.
+    '''
+    class EuroProblem(PMF):
+      def likelihood(self, data, given):
+        return given/100. if data == "H" else 1-given/100.
+
+    pmf = EuroProblem()
+    pmf.uniform_dist(xrange(101))
+    observations = 'H'*140 + 'T'*110
+    for observation in observation:
+      pmf.update(observation)
 
 if __name__ == "__main__": unittest.main()
