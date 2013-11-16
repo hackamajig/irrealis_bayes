@@ -619,8 +619,17 @@ class FunctionalTestPMF(unittest.TestCase):
       pmf = pmfs[pmf_number]
       pmf.update(pmf_partial_serial_number)
 
-    # First thing we can try is sum of expectations.
+    # First thing we can try is summing expectations.
     print "sum of expectations:", sum(pmf.expectation() for pmf in pmfs)
+
+    # Second thing we can try is summing endpoints of credible intervals. I
+    # think that if I want a final 90% credible interval, I need my individual
+    # credible intervals to have probability 0.9**(1./10.).
+    cdfs = [CDF(pmf) for pmf in pmfs]
+    credible_intervals = [cdf.percentiles(0.005, 0.995) for cdf in cdfs]
+    endpoint_arrays = zip(*credible_intervals)
+    summed_credible_interval = [sum(array) for array in endpoint_arrays]
+    print "90% summed_credible_interval:", summed_credible_interval
 
 
 if __name__ == "__main__": unittest.main()
