@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 from irrealis_bayes import CDF, PMF
 
-import unittest
+import random, unittest
 
 
 class UnitTestPMF(unittest.TestCase):
   def setUp(self):
+    # Stabilize the random number generator, so test results using random are
+    # consistent. (This has side effects, since state of python RNG is static.)
+    random.seed(0)
     self.pmf = PMF.fromkeys('abcde', 1)
 
   def exercise_pmf(self):
@@ -25,6 +28,32 @@ class UnitTestPMF(unittest.TestCase):
     pmf = PMF.fromkeys((1,2,3), 1.)
     pmf.normalize()
     self.assertTrue(1.999 < pmf.expectation() < 2.001)
+
+  def test_random_from_uniform_dist(self):
+    # Test is probabilistic, which is not great, but is necessary.
+    simulation_pmf = PMF()
+    for n in range(10000):
+      x = self.pmf.random()
+      hit_count = simulation_pmf.get(x, 0)
+      simulation_pmf[x] = hit_count + 1
+    simulation_pmf.normalize()
+
+    for x in 'abcde':
+      self.assertTrue(0.190 < simulation_pmf[x] < 0.210)
+
+  def test_random_from_power_dist(self):
+    # Test is probabilistic, which is not great, but is necessary.
+    self.pmf.power_law_dist(xrange(1, 4))
+    simulation_pmf = PMF()
+    for n in range(10000):
+      x = self.pmf.random()
+      hit_count = simulation_pmf.get(x, 0)
+      simulation_pmf[x] = hit_count + 1
+    simulation_pmf.normalize()
+
+    self.assertTrue(0.540 < simulation_pmf[1] < 0.550)
+    self.assertTrue(0.262 < simulation_pmf[2] < 0.283)
+    self.assertTrue(0.166 < simulation_pmf[3] < 0.197)
 
   def test_uniform_dist(self):
     # Verify that pmf is cleared when new hypotheses are applied.
