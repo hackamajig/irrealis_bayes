@@ -22,6 +22,80 @@ def sum_independent_pmfs(pmfs):
   return reduce(lambda x, y: x+y, pmfs)
 
 
+class PMF2(dict):
+  'Dictionary as probability mass function.'
+  def __init__(self, *al, **kw):
+    super(PMF2, self).__init__(*al, **kw)
+
+  def __add__(self, other):
+    return add_two_independent_pmfs(self, other)
+
+  def copy(self):
+    'Return a shallow copy of this distribution.'
+    return self.__class__(self)
+
+  def total(self):
+    'Sum elements of this distribution.'
+    return sum(self.itervalues())
+
+  def normalizer(self):
+    'Return normalizing constant to scale distribution so it sums to one.'
+    total = self.total()
+    return 1./total if total else float('inf')
+
+  def expectation(self):
+    'Compute the expectation, aka mean, of this distribution.'
+    try:
+      return sum(event*prob for event, prob in self.iteritems())
+    except TypeError as e:
+      raise TypeError("Can't compute expectation of non-numeric events ({})".format(e))
+
+  def scale(self, factor):
+    'Scale all measures by a common factor.'
+    for key in self:
+      self[key] *= factor
+
+  def normalize(self):
+    'Normalize all measures so they sum to one, making this a probability distribution.'
+    self.scale(self.normalizer())
+
+  def random(self):
+    '''
+    Returns random event.
+    Probability of returning this event is determined by this distribution.
+    '''
+    # It would be nice if we didn't have to compute total every time this
+    # function is called; but otherwise we'd have to assume this distribution
+    # has been normalized(), which is not always true.
+    #
+    # I've considered keeping a 'total' attribute which is always up-to-date.
+    # Might be worth doing; but increases code complexity.
+    target = random.random()*self.total()
+    total = 0
+    for event, prob in self.iteritems():
+      total += prob
+      if total >= target:
+        return event
+
+  def uniform_dist(self, events):
+    'Assign equal probabilities to each of a list of events.'
+    self.clear()
+    for event in events:
+      self[event] = 1
+    self.normalize()
+
+  def power_law_dist(self, events, alpha=1.):
+    'Assign power law distribution to each of a list of quantitative events.'
+    self.clear()
+    for event in events:
+      self[event] = event**(-alpha)
+    self.normalize()
+
+  def conditional_probability(self, event, given):
+    'Default implementation assumes independence, so returns simple probability of event.'
+    return self[event]
+
+
 class PMF(dict):
   'Dictionary as probability mass function.'
   def __init__(self, *al, **kw):
