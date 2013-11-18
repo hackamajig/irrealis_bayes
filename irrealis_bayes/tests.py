@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from irrealis_bayes import CDF, PMF, PMF2, add_two_independent_pmfs, filter_possible_events, sum_independent_pmfs
+from irrealis_bayes import CDF, PMF, add_two_independent_pmfs, filter_possible_events, sum_independent_pmfs
 
 import random, unittest
 
@@ -446,7 +446,6 @@ class FunctionalTestPMF(unittest.TestCase):
     pmf.update(('bowl_a', 'vanilla'))
     self.assertTrue(0.696 < pmf['A'] < 0.697)
 
-
   def test_dice_problem(self):
     '''
     test_dice_problem (irrealis_bayes.tests.FunctionalTestPMF)
@@ -745,78 +744,5 @@ class FunctionalTestPMF(unittest.TestCase):
     observations = 'H'*140 + 'T'*110
     for observation in observations:
       pmf.update(observation)
-
-
-class FunctionalTestPMF2(unittest.TestCase):
-  def test_cookie_problem(self):
-    '''
-    test_cookie_problem (irrealis_bayes.tests.FunctionalTestPMF)
-
-    As in previous example, but using PMF subclass with likelihood().
-    implemented.
-    '''
-    class CookieLikelihood(PMF2):
-      def conditional_probability(self, event, given):
-        return self[given][event]
-
-    class CookieProblem(PMF2):
-      def __init__(self, *al, **kw):
-        super(CookieProblem, self).__init__(*al, **kw)
-        self.hypotheses = CookieLikelihood(
-          bowl_1 = PMF(vanilla = 30, chocolate = 10),
-          bowl_2 = PMF(vanilla = 20, chocolate = 20),
-        )
-        self.uniform_dist(self.hypotheses)
-      def update(self, data):
-        'Updates posterior probability distribution given new data.'
-        for hypothesis in self:
-          self[hypothesis] *= self.hypotheses.conditional_probability(data, given = hypothesis)
-        self.normalize()
-        
-    pmf = CookieProblem()
-    pmf.update('vanilla')
-    self.assertTrue(0.599 < pmf['bowl_1'] < 0.601)
-
-  def test_cookie_problem_sans_replacement(self):
-    class CookieLikelihood(PMF2):
-      def get_bowl_cookie_hypothesis(self, event, given):
-        bowl, cookie = event
-        hypothesis = self[given]
-        return bowl, cookie, hypothesis
-      def conditional_probability(self, event, given):
-        bowl, cookie, hypothesis = self.get_bowl_cookie_hypothesis(event, given)
-        bowl_distribution = hypothesis[bowl].copy()
-        bowl_distribution.normalize()
-        return bowl_distribution[cookie]
-      def update_state(self, event, given):
-        bowl, cookie, hypothesis = self.get_bowl_cookie_hypothesis(event, given)
-        hypothesis[bowl][cookie] -= 1
-
-    class CookieProblem(PMF2):
-      def __init__(self, *al, **kw):
-        super(CookieProblem, self).__init__(*al, **kw)
-        # These encode the initial state of the bowls.
-        bowl_1 = PMF2(vanilla=30, chocolate=10)
-        bowl_2 = PMF2(vanilla=20, chocolate=20)
-        self.hypotheses = CookieLikelihood(
-          # The states of the different hypotheses mustn't depend on each
-          # other, so each hypothesis gets its own copy of the initial state.
-          A = dict(bowl_a = bowl_1.copy(), bowl_b = bowl_2.copy()),
-          B = dict(bowl_a = bowl_2.copy(), bowl_b = bowl_1.copy()),
-        )
-        self.uniform_dist(self.hypotheses)
-      def update(self, data):
-        'Updates posterior probability distribution given new data.'
-        for hypothesis in self:
-          self[hypothesis] *= self.hypotheses.conditional_probability(data, given = hypothesis)
-          self.hypotheses.update_state(data, given = hypothesis)
-        self.normalize()
-
-    pmf = CookieProblem()
-    pmf.update(('bowl_a', 'vanilla'))
-    self.assertTrue(0.599 < pmf['A'] < 0.601)
-    pmf.update(('bowl_a', 'vanilla'))
-    self.assertTrue(0.696 < pmf['A'] < 0.697)
-
 
 if __name__ == "__main__": unittest.main()
