@@ -745,7 +745,9 @@ class FunctionalTestPMF(unittest.TestCase):
     for observation in observations:
       pmf.update(observation)
 
-    self.assertTrue(0.5594 < pmf.expectation() < 0.5596)
+    self.assertTrue(55.95 < pmf.expectation() < 55.96)
+    cdf = CDF(pmf)
+    self.assertEqual((51, 61), cdf.percentiles(0.05, 0.95))
 
 
 if __name__ == "__main__": unittest.main()
