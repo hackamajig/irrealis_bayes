@@ -745,4 +745,7 @@ class FunctionalTestPMF(unittest.TestCase):
     for observation in observations:
       pmf.update(observation)
 
+    self.assertTrue(0.5594 < pmf.expectation() < 0.5596)
+
+
 if __name__ == "__main__": unittest.main()
