@@ -29,10 +29,11 @@ class Brainstorm(unittest.TestCase):
       vanilla. What is the probability that
       it came from Bowl 1?
     '''
-    P_V_given_B1 = 30./(30.+10.)
-    P_V_given_B2 = 20./(20.+20.)
-    P_B1 = 1./2.
-    P_B2 = 1./2.
+    P_V_given_B1 = 30./(30.+10.) # Likelihood of a vanilla cookie from bowl 1.
+    P_V_given_B2 = 20./(20.+20.) # Likelihood of a vanilla cookie from bowl 2.
+    P_B1 = 1./2. # Prior probability of bowl 1.
+    P_B2 = 1./2. # Prior probability of bowl 2.
+    # Posterior probability of bowl 1 given a randomly-selected vanilla cookie:
     P_B1_given_V = P_B1 * P_V_given_B1 / (P_B1*P_V_given_B1 + P_B2*P_V_given_B2)
     self.assertTrue((3./5. - 0.001) < P_B1_given_V < (3./5. + 0.001))
 
